@@ -1,0 +1,4 @@
+    if swapped:
+        return arr       
+    if not swapped:
+        bubbleSort(arr)
