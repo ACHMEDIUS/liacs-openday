@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './Wheel.css';
 
 const Wheel: React.FC = () => {
@@ -7,11 +7,11 @@ const Wheel: React.FC = () => {
   const [animationDuration, setAnimationDuration] = useState(0);
 
   const sections = [
-    { color: '#e74c3c', label: 'Niks', odds: 69 },   // Red
-    { color: '#3498db', label: 'Opnieuw', odds: 25 },   // Blue
-    { color: '#2ecc71', label: 'Pen', odds: 5 },    // Green
-    { color: '#f1c40f', label: 'Beker', odds: 0.5 },  // Yellow
-    { color: '#9b59b6', label: 'Tasje', odds: 0.5 },  // Purple
+    { color: '#033677', label: 'Niks', odds: 800 },    // 80%
+    { color: '#ea7c2d', label: 'Opnieuw', odds: 140 }, // 14%
+    { color: '#040f54', label: 'Pen', odds: 50 },      // 5%
+    { color: '#ffdece', label: 'Beker', odds: 5 },     // 0.5%
+    { color: '#406896', label: 'Tasje', odds: 5 },     // 0.5%
   ];
 
   const spinWheel = () => {
@@ -19,30 +19,31 @@ const Wheel: React.FC = () => {
 
     setSpinning(true);
 
-    // Generate random duration between 4.5 and 5.2 seconds
-    const duration = 4.5 + Math.random() * (5.2 - 4.5);
-    setAnimationDuration(duration);
-
     // Select a section based on skewed odds
     const selectedSection = selectSectionBasedOnOdds();
 
-    // Each section is 72 degrees (360 / 5)
+    // Output the chosen option to the console
+    console.log('Chosen option:', sections[selectedSection].label);
+
+    // Simulate spin duration
+    const duration = 5; // Adjust as needed for excitement
+    setAnimationDuration(duration);
+
+    const spins = Math.floor(Math.random() * 3) + 5; // Random spins between 5 and 7
     const sectionAngle = 360 / sections.length;
 
-    // Calculate the target rotation
-    const spins = 5; // Number of spins before slowing down
-    const randomAngleWithinSection = Math.random() * sectionAngle;
-    const totalRotation =
+    // Calculate the angle to rotate to land on the chosen section
+    const selectedSectionAngle = selectedSection * sectionAngle + sectionAngle / 2;
+    const currentRotationNormalized = (rotation % 360 + 360) % 360;
+    const angleToRotate =
       spins * 360 +
-      selectedSection * sectionAngle +
-      randomAngleWithinSection;
+      (360 - selectedSectionAngle - currentRotationNormalized) % 360;
 
-    const newRotation = rotation + totalRotation;
-
+    const newRotation = rotation + angleToRotate;
     setRotation(newRotation);
 
     // Animate the pointer to simulate the clicking effect
-    animatePointer(duration, rotation, totalRotation);
+    animatePointer(duration, rotation, angleToRotate);
 
     // After the animation is done, set spinning to false
     setTimeout(() => {
@@ -52,11 +53,11 @@ const Wheel: React.FC = () => {
 
   const selectSectionBasedOnOdds = () => {
     const totalOdds = sections.reduce((sum, section) => sum + section.odds, 0);
-    const rand = Math.random() * totalOdds;
+    const rand = Math.floor(Math.random() * totalOdds) + 1; // Random integer between 1 and totalOdds
     let cumulative = 0;
     for (let i = 0; i < sections.length; i++) {
       cumulative += sections[i].odds;
-      if (rand < cumulative) {
+      if (rand <= cumulative) {
         return i;
       }
     }
@@ -71,26 +72,25 @@ const Wheel: React.FC = () => {
     const pointer = document.querySelector('.arrow') as HTMLElement;
     if (!pointer) return;
 
-    const totalSectionsPassed = Math.floor(
-      totalRotation / (360 / sections.length)
-    );
-
-    let clickCount = 0;
-    let lastTime = 0;
+    let lastSectionIndex = 0;
     const startTime = performance.now();
 
     const tick = (time: number) => {
-      const elapsed = (time - startTime) / 1000; // in seconds
+      const elapsed = (time - startTime) / 1000; // In seconds
       const progress = Math.min(elapsed / duration, 1);
+      const easedProgress = easeOutCubic(progress);
       const currentRotation =
-        startRotation + totalRotation * easeOutCubic(progress);
+        startRotation + totalRotation * easedProgress;
 
-      const sectionsPassed = Math.floor(
-        (currentRotation % 360) / (360 / sections.length)
+      const sectionAngle = 360 / sections.length;
+      const currentRotationNormalized =
+        (currentRotation % 360 + 360) % 360;
+      const currentSectionIndex = Math.floor(
+        (currentRotationNormalized) / sectionAngle
       );
 
-      if (sectionsPassed > clickCount) {
-        clickCount = sectionsPassed;
+      if (currentSectionIndex !== lastSectionIndex) {
+        lastSectionIndex = currentSectionIndex;
         pointer.classList.add('pointer-animate');
         setTimeout(() => {
           pointer.classList.remove('pointer-animate');
@@ -171,7 +171,7 @@ const Wheel: React.FC = () => {
                 />
                 <text
                   x="500"
-                  y="100"
+                  y="150"
                   textAnchor="middle"
                   fill="#ffffff"
                   fontSize="50"
