@@ -22,5 +22,5 @@
   },
   "include": [
     "src"
-  ]
+, "../liacs-openday/src/data"  ]
 }
