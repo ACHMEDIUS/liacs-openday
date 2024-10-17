@@ -7,11 +7,10 @@ const Wheel: React.FC = () => {
   const [animationDuration, setAnimationDuration] = useState(0);
 
   const sections = [
-    { color: '#033677', label: 'Niks', odds: 800 },    // 80%
-    { color: '#ea7c2d', label: 'Opnieuw', odds: 140 }, // 14%
-    { color: '#040f54', label: 'Pen', odds: 50 },      // 5%
-    { color: '#ffdece', label: 'Beker', odds: 5 },     // 0.5%
-    { color: '#406896', label: 'Tasje', odds: 5 },     // 0.5%
+    { color: '#033677', label: 'Niks', odds: 300 },    // 30%
+    { color: '#ea7c2d', label: 'Opnieuw', odds: 300 }, // 30% 
+    { color: '#406896', label: 'Beker', odds: 200 },     // 20%
+    { color: '#d38750', label: 'T-Shirt', odds: 200 },     // 20%
   ];
 
   const spinWheel = () => {

@@ -1,5 +1,3 @@
-// questions.ts
-
 // Function to trim the first line if it's blank
 const trimFirstLine = (codeSnippet: string): string => {
     const lines = codeSnippet.split('\n');
@@ -18,52 +16,12 @@ const trimFirstLine = (codeSnippet: string): string => {
   export const questions: Question[] = [
     {
       codeSnippet: `
-  def calculate_average(numbers):
-      total = sum(numbers)
-      return total / len(total)
+  def add(a, b):
+      result = a + b
+      return result
+  print(result)
   `,
-      correctLineNumber: 2,
-    },
-    {
-      codeSnippet: `
-  function isEven(num) {
-      return num % 2 == 1;
-  }
-  `,
-      correctLineNumber: 1,
-    },
-    {
-      codeSnippet: `
-  #include <iostream>
-  int main() {
-      int arr[5] = {1, 2, 3, 4, 5};
-      for (int i = 0; i <= 5; ++i) {
-          std::cout << arr[i] << " ";
-      }
-      return 0;
-  }
-  `,
-      correctLineNumber: 4,
-    },
-    {
-      codeSnippet: `
-  let obj = {a: 1, b: 2, c: 3};
-  for (let key in obj) {
-      console.log(obj.key);
-  }
-  `,
-      correctLineNumber: 2,
-    },
-    {
-      codeSnippet: `
-  def merge_dicts(a, b):
-      return a.update(b)
-  
-  d1 = {'x': 1}
-  d2 = {'y': 2}
-  print(merge_dicts(d1, d2))
-  `,
-      correctLineNumber: 2,
+      correctLineNumber: 3,
     },
     {
       codeSnippet: `
@@ -76,171 +34,56 @@ const trimFirstLine = (codeSnippet: string): string => {
       return 0;
   }
   `,
-      correctLineNumber: 6,
+      correctLineNumber: 5,
     },
     {
       codeSnippet: `
-  let arr = [1, 2, 3];
-  arr.map(x => x * 2);
-  console.log(arr);
+  #include <iostream>
+  using namespace std;
+
+  int main() {
+      cout << "Enter a number: " << endl;
+      cin >> x;  
+      cout << "You entered: " << x << endl;
+      
+      return 0;
+  }
+  `,
+      correctLineNumber: 5,
+    },
+    {
+      codeSnippet: `
+  for i in range(5):
+
+      print("Number: " + i)
+  print(i)
+  `,
+      correctLineNumber: 3,
+    },
+    {
+      codeSnippet: `
+  #include <iostream>
+  using namespace std;
+
+  void sayHello() {
+      cout << message << endl;
+  }
+
+  int main() {
+      string message = "Hello, world!";
+      sayHello();
+      return 0;
+  }
   `,
       correctLineNumber: 4,
     },
     {
       codeSnippet: `
-  class MyClass:
-      def __init__(self, value):
-          self.value = value
+  my_list = [1, 2, 3]
   
-      def get_value():
-          return self.value
-  
-  obj = MyClass(10)
-  print(obj.get_value())
+  print(my_list[3])
   `,
-      correctLineNumber: 5,
-    },
-    {
-      codeSnippet: `
-  #include <iostream>
-  void printMessage(const char* msg) {
-      if (msg == NULL) {
-          std::cout << "No message" << std::endl;
-      }
-      std::cout << msg << std::endl;
-  }
-  
-  int main() {
-      printMessage(NULL);
-      return 0;
-  }
-  `,
-      correctLineNumber: 6,
-    },
-    {
-      codeSnippet: `
-  let x = 5;
-  if (x = 10) {
-      console.log('x is 10');
-  }
-  `,
-      correctLineNumber: 3,
-    },
-    {
-      codeSnippet: `
-  def append_to_list(value, lst=[]):
-      lst.append(value)
-      return lst
-  
-  print(append_to_list(1))
-  print(append_to_list(2))
-  `,
-      correctLineNumber: 1,
-    },
-    {
-      codeSnippet: `
-  #include <iostream>
-  int main() {
-      int arr[5];
-      for (int i = 0; i < 5; ++i)
-          arr[i] = i * 2;
-      delete[] arr;
-      return 0;
-  }
-  `,
-      correctLineNumber: 6,
-    },
-    {
-      codeSnippet: `
-  let arr = [1, 2, 3];
-  console.log(arr.length());
-  `,
-      correctLineNumber: 3,
-    },
-    {
-      codeSnippet: `
-  def area_of_circle(r):
-      from math import pi
-      return pi * r * r
-  
-  print(area_of_circle('5'))
-  `,
-      correctLineNumber: 5,
-    },
-    {
-      codeSnippet: `
-  #include <iostream>
-  class Base {
-  public:
-      virtual void show() { std::cout << "Base\\n"; }
-  };
-  
-  class Derived : public Base {
-      void show() { std::cout << "Derived\\n"; }
-  };
-  
-  int main() {
-      Base *b = new Derived();
-      b->show();
-      return 0;
-  }
-  `,
-      correctLineNumber: 7,
-    },
-    {
-      codeSnippet: `
-  let x = NaN;
-  if (x === NaN) {
-      console.log('x is NaN');
-  }
-  `,
-      correctLineNumber: 3,
-    },
-    {
-      codeSnippet: `
-  def increment(n):
-      n += 1
-  
-  num = 5
-  increment(num)
-  print(num)
-  `,
-      correctLineNumber: 4,
-    },
-    {
-      codeSnippet: `
-  #include <iostream>
-  #include <string>
-  int main() {
-      std::string s = "hello";
-      if (s.compare("hello") == -1) {
-          std::cout << "Strings are equal" << std::endl;
-      }
-      return 0;
-  }
-  `,
-      correctLineNumber: 6,
-    },
-    {
-      codeSnippet: `
-  function addToList(item, list = []) {
-      list.push(item);
-      return list;
-  }
-  
-  console.log(addToList(1));
-  console.log(addToList(2));
-  `,
-      correctLineNumber: 1,
-    },
-    {
-      codeSnippet: `
-  def func(a, b, c):
-      print(a, b, c)
-  
-  func(*[1, 2])
-  `,
-      correctLineNumber: 5,
+      correctLineNumber: 2,
     },
   ].map((question) => ({
     ...question,
