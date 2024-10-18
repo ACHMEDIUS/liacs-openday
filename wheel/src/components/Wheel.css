@@ -15,8 +15,8 @@ body {
   }
   
   .wheel {
-    width: 75vh;
-    height: 75vh;
+    width: 70vh;
+    height: 70vh;
     position: absolute;
     top: 50%;
     left: 50%;
