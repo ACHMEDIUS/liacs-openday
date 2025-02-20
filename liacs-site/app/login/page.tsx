@@ -1,21 +1,21 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import firebaseApp from "@/lib/firebaseClient";
+import firebaseApp from "../../lib/firebaseClient";
 
-export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+function LoginPageContent() {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
   const router = useRouter();
   const searchParams = useSearchParams();
 
   // Use the redirect path if provided, otherwise default to "/"
   const redirectPath = searchParams.get("redirect") || "/";
 
-  const handleLogin = async (e: FormEvent) => {
+  const handleLogin = useCallback(async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(""); // Clear any existing error
 
@@ -24,11 +24,14 @@ export default function LoginPage() {
       await signInWithEmailAndPassword(auth, email, password);
       // On success, redirect the user to the protected page or fallback
       router.replace(redirectPath);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
     }
-  };
+  }, [email, password, redirectPath, router]);
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -77,5 +80,13 @@ export default function LoginPage() {
         </button>
       </form>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginPageContent />
+    </Suspense>
   );
 }
