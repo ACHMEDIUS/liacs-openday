@@ -1,0 +1,5 @@
+1. Loading component
+2. Home page
+3. Rewrite to use tailwind
+4. Login page
+5. QnA page

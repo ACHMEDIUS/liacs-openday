@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Card, CardContent, Box } from '@mui/material';
+"use client";
+import { useState } from 'react';
 
 interface QuestionBoxProps {
   codeSnippet: string;
@@ -27,19 +27,20 @@ const QuestionBox: React.FC<QuestionBoxProps> = ({
   };
 
   return (
-    <Card
-      variant="outlined"
-      sx={{
-        width: '90%',
-        marginBottom: 4,
-        backgroundColor: "#1e1e1e",
-        color: "#fff",
-        borderRadius: '0.5rem',
-      }}
-      className="border-2 border-gray-600 rounded-lg"
+    <div
+      
+      // sx={{
+      //   width: '90%',
+      //   marginBottom: 4,
+      //   backgroundColor: "#1e1e1e",
+      //   color: "#fff",
+      //   borderRadius: '0.5rem',
+      // }}
+      className="width-9/10 margin-b-xs border-2 border-gray-600 rounded-lg"
     >
-      <CardContent>
-        <Box component="div" sx={{ display: 'flex', flexDirection: 'column' }}>
+      <div>
+        <div className=''>
+          {/* sx={{ display: 'flex', flexDirection: 'column' }} */}
           {codeLines.map((line, index) => {
             // Determine the background color based on whether the line is clicked and correct
             let backgroundColor = 'transparent';
@@ -102,9 +103,9 @@ const QuestionBox: React.FC<QuestionBoxProps> = ({
               </div>
             );
           })}
-        </Box>
-      </CardContent>
-    </Card>
+        </div>
+      </div>
+    </div>
   );
 };
 
