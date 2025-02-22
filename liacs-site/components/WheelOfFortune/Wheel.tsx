@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from 'react';
-import './Wheel.css';
+import React, { useState } from "react";
+import "./Wheel.css";
 
 const Wheel: React.FC = () => {
   const [spinning, setSpinning] = useState(false);
@@ -9,44 +9,34 @@ const Wheel: React.FC = () => {
   const [animationDuration, setAnimationDuration] = useState(0);
 
   const sections = [
-    { color: '#033677', label: 'Niks', odds: 300 },    // 30%
-    { color: '#ea7c2d', label: 'Opnieuw', odds: 300 }, // 30% 
-    { color: '#406896', label: 'Beker', odds: 200 },     // 20%
-    { color: '#d38750', label: 'T-Shirt', odds: 200 },     // 20%
+    { color: "#033677", label: "Niks", odds: 300 },
+    { color: "#ea7c2d", label: "Opnieuw", odds: 300 },
+    { color: "#406896", label: "Beker", odds: 200 },
+    { color: "#d38750", label: "T-Shirt", odds: 200 },
   ];
 
   const spinWheel = () => {
     if (spinning) return;
-
     setSpinning(true);
 
-    // Select a section based on skewed odds
     const selectedSection = selectSectionBasedOnOdds();
+    console.log("Chosen option:", sections[selectedSection].label);
 
-    // Output the chosen option to the console
-    console.log('Chosen option:', sections[selectedSection].label);
-
-    // Simulate spin duration
-    const duration = 5; // Adjust as needed for excitement
+    const duration = 5;
     setAnimationDuration(duration);
 
-    const spins = Math.floor(Math.random() * 3) + 5; // Random spins between 5 and 7
+    const spins = Math.floor(Math.random() * 3) + 5; // between 5 and 7 spins
     const sectionAngle = 360 / sections.length;
-
-    // Calculate the angle to rotate to land on the chosen section
     const selectedSectionAngle = selectedSection * sectionAngle + sectionAngle / 2;
-    const currentRotationNormalized = (rotation % 360 + 360) % 360;
+    const currentRotationNormalized = ((rotation % 360) + 360) % 360;
     const angleToRotate =
       spins * 360 +
       (360 - selectedSectionAngle - currentRotationNormalized) % 360;
-
     const newRotation = rotation + angleToRotate;
     setRotation(newRotation);
 
-    // Animate the pointer to simulate the clicking effect
     animatePointer(duration, rotation, angleToRotate);
 
-    // After the animation is done, set spinning to false
     setTimeout(() => {
       setSpinning(false);
     }, duration * 1000);
@@ -54,7 +44,7 @@ const Wheel: React.FC = () => {
 
   const selectSectionBasedOnOdds = () => {
     const totalOdds = sections.reduce((sum, section) => sum + section.odds, 0);
-    const rand = Math.floor(Math.random() * totalOdds) + 1; // Random integer between 1 and totalOdds
+    const rand = Math.floor(Math.random() * totalOdds) + 1;
     let cumulative = 0;
     for (let i = 0; i < sections.length; i++) {
       cumulative += sections[i].odds;
@@ -62,7 +52,7 @@ const Wheel: React.FC = () => {
         return i;
       }
     }
-    return sections.length - 1; // Fallback
+    return sections.length - 1;
   };
 
   const animatePointer = (
@@ -70,34 +60,27 @@ const Wheel: React.FC = () => {
     startRotation: number,
     totalRotation: number
   ) => {
-    const pointer = document.querySelector('.arrow') as HTMLElement;
+    const pointer = document.querySelector(".arrow") as HTMLElement;
     if (!pointer) return;
 
     let lastSectionIndex = 0;
     const startTime = performance.now();
 
     const tick = (time: number) => {
-      const elapsed = (time - startTime) / 1000; // In seconds
+      const elapsed = (time - startTime) / 1000;
       const progress = Math.min(elapsed / duration, 1);
       const easedProgress = easeOutCubic(progress);
-      const currentRotation =
-        startRotation + totalRotation * easedProgress;
-
+      const currentRotation = startRotation + totalRotation * easedProgress;
       const sectionAngle = 360 / sections.length;
-      const currentRotationNormalized =
-        (currentRotation % 360 + 360) % 360;
-      const currentSectionIndex = Math.floor(
-        (currentRotationNormalized) / sectionAngle
-      );
-
+      const currentRotationNormalized = ((currentRotation % 360) + 360) % 360;
+      const currentSectionIndex = Math.floor(currentRotationNormalized / sectionAngle);
       if (currentSectionIndex !== lastSectionIndex) {
         lastSectionIndex = currentSectionIndex;
-        pointer.classList.add('pointer-animate');
+        pointer.classList.add("pointer-animate");
         setTimeout(() => {
-          pointer.classList.remove('pointer-animate');
+          pointer.classList.remove("pointer-animate");
         }, 100);
       }
-
       if (progress < 1) {
         requestAnimationFrame(tick);
       }
@@ -106,10 +89,8 @@ const Wheel: React.FC = () => {
     requestAnimationFrame(tick);
   };
 
-  // Easing function for smooth deceleration
   const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
-  // Function to describe an arc sector
   const describeArc = (
     x: number,
     y: number,
@@ -119,16 +100,13 @@ const Wheel: React.FC = () => {
   ) => {
     const start = polarToCartesian(x, y, radius, endAngle);
     const end = polarToCartesian(x, y, radius, startAngle);
-
-    const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
-
+    const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
     const d = [
       `M ${x} ${y}`,
       `L ${start.x} ${start.y}`,
       `A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`,
-      'Z',
-    ].join(' ');
-
+      "Z",
+    ].join(" ");
     return d;
   };
 
@@ -139,7 +117,6 @@ const Wheel: React.FC = () => {
     angleInDegrees: number
   ) => {
     const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
-
     return {
       x: centerX + radius * Math.cos(angleInRadians),
       y: centerY + radius * Math.sin(angleInRadians),
@@ -147,12 +124,12 @@ const Wheel: React.FC = () => {
   };
 
   return (
-    <div className="wheel-container">
-      <div className="wheel">
+    <section className="relative w-screen h-screen overflow-hidden bg-white">
+      {/* Wheel */}
+      <section className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[70vh] h-[70vh] rounded-full overflow-hidden shadow-[0_0_15px_rgba(0,0,0,0.5)]">
         <svg
           viewBox="0 0 1000 1000"
-          width="100%"
-          height="100%"
+          className="w-full h-full"
           style={{
             transform: `rotate(${rotation}deg)`,
             transition: `transform ${animationDuration}s cubic-bezier(0.33, 1, 0.68, 1)`,
@@ -163,7 +140,6 @@ const Wheel: React.FC = () => {
             const startAngle = index * anglePerSection;
             const endAngle = startAngle + anglePerSection;
             const rotateText = startAngle + anglePerSection / 2;
-
             return (
               <g key={index}>
                 <path
@@ -174,7 +150,7 @@ const Wheel: React.FC = () => {
                   x="500"
                   y="150"
                   textAnchor="middle"
-                  fill="#ffffff"
+                  fill="#000"
                   fontSize="50"
                   transform={`rotate(${rotateText}, 500, 500)`}
                 >
@@ -184,12 +160,18 @@ const Wheel: React.FC = () => {
             );
           })}
         </svg>
-      </div>
-      <div className="arrow"></div>
-      <button onClick={spinWheel} disabled={spinning} className="spin-button">
+      </section>
+      {/* Arrow */}
+      <section className="arrow"></section>
+      {/* Spin Button */}
+      <button
+        onClick={spinWheel}
+        disabled={spinning}
+        className="absolute bottom-12 left-1/2 transform -translate-x-1/2 py-4 px-8 text-xl border-2 border-black rounded-full bg-gray-300 text-black transition-all duration-300 hover:bg-black hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+      >
         Spin
       </button>
-    </div>
+    </section>
   );
 };
 

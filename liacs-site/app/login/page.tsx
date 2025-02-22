@@ -11,27 +11,66 @@ function LoginPageContent() {
   const [error, setError] = useState<string>("");
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  // Use the redirect path if provided, otherwise default to "/"
   const redirectPath = searchParams.get("redirect") || "/";
 
-  const handleLogin = useCallback(async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError(""); // Clear any existing error
+  const handleLogin = useCallback(
+    async (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      setError("");
 
-    const auth = getAuth(firebaseApp);
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      // On success, redirect the user to the protected page or fallback
-      router.replace(redirectPath);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("An unknown error occurred");
+      // Check for too many failed attempts
+      const storedCount = localStorage.getItem("failedLoginAttempts");
+      const failedAttempts = storedCount ? parseInt(storedCount, 10) : 0;
+      if (failedAttempts >= 10) {
+        setError(
+          "Your account is locked due to too many failed login attempts."
+        );
+        return;
       }
-    }
-  }, [email, password, redirectPath, router]);
+
+      const auth = getAuth(firebaseApp);
+      try {
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        localStorage.setItem("failedLoginAttempts", "0");
+
+        // Retrieve the Firebase ID token
+        const token = await userCredential.user.getIdToken();
+
+        // Send the token to the API route to set a secure HTTP-only cookie
+        const res = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token }),
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to set auth token.");
+        }
+
+        router.replace(redirectPath);
+      } catch (err: unknown) {
+        const newFailedAttempts = failedAttempts + 1;
+        localStorage.setItem(
+          "failedLoginAttempts",
+          newFailedAttempts.toString()
+        );
+        if (err instanceof Error) {
+          setError(
+            `Login failed (Attempt ${newFailedAttempts} of 10): ${err.message}`
+          );
+        } else {
+          setError(
+            `Login failed (Attempt ${newFailedAttempts} of 10): An unknown error occurred`
+          );
+        }
+      }
+    },
+    [email, password, redirectPath, router]
+  );
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -41,8 +80,7 @@ function LoginPageContent() {
       >
         <h1 className="text-xl font-bold mb-4">Login</h1>
         {error && <p className="text-red-500 mb-2">{error}</p>}
-
-        <div className="mb-4">
+        <section className="mb-4">
           <label htmlFor="email" className="block font-semibold mb-1">
             Email
           </label>
@@ -55,9 +93,8 @@ function LoginPageContent() {
             placeholder="name@example.com"
             required
           />
-        </div>
-
-        <div className="mb-4">
+        </section>
+        <section className="mb-4">
           <label htmlFor="password" className="block font-semibold mb-1">
             Password
           </label>
@@ -70,8 +107,7 @@ function LoginPageContent() {
             placeholder="********"
             required
           />
-        </div>
-
+        </section>
         <button
           type="submit"
           className="bg-blue-500 text-white py-2 px-4 w-full rounded hover:bg-blue-600"
@@ -85,7 +121,7 @@ function LoginPageContent() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<section>Loading...</section>}>
       <LoginPageContent />
     </Suspense>
   );

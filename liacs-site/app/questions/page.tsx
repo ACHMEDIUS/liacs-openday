@@ -50,14 +50,14 @@ export default function QuestionsPage() {
         </ul>
       )}
 
-      <div className="mt-6">
+      <section className="mt-6">
         <Link
           href="/questions/add"
           className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
           + Add a Question
         </Link>
-      </div>
+      </section>
     </main>
   );
 }

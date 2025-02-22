@@ -27,7 +27,7 @@ const QuestionBox: React.FC<QuestionBoxProps> = ({
   };
 
   return (
-    <div
+    <section
       
       // sx={{
       //   width: '90%',
@@ -38,8 +38,8 @@ const QuestionBox: React.FC<QuestionBoxProps> = ({
       // }}
       className="width-9/10 margin-b-xs border-2 border-gray-600 rounded-lg"
     >
-      <div>
-        <div className=''>
+      <section>
+        <section className=''>
           {/* sx={{ display: 'flex', flexDirection: 'column' }} */}
           {codeLines.map((line, index) => {
             // Determine the background color based on whether the line is clicked and correct
@@ -49,7 +49,7 @@ const QuestionBox: React.FC<QuestionBoxProps> = ({
             }
 
             return (
-              <div
+              <section
                 key={index}
                 className="line-container"
                 style={{
@@ -100,12 +100,12 @@ const QuestionBox: React.FC<QuestionBoxProps> = ({
                 >
                   {line}
                 </pre>
-              </div>
+              </section>
             );
           })}
-        </div>
-      </div>
-    </div>
+        </section>
+      </section>
+    </section>
   );
 };
 

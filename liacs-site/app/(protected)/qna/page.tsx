@@ -62,7 +62,7 @@ export default function QnAPage() {
           {questions.map((q) => (
             <li key={q.id} className="border p-4 rounded">
               <p className="mb-2">{q.text}</p>
-              <div className="flex gap-2">
+              <section className="flex gap-2">
                 <button
                   onClick={() => toggleAccept(q.id, q.accepted)}
                   className={`px-3 py-1 rounded ${
@@ -77,7 +77,7 @@ export default function QnAPage() {
                 >
                   Delete
                 </button>
-              </div>
+              </section>
             </li>
           ))}
         </ul>

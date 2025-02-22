@@ -9,7 +9,7 @@ export default function InteractivePage() {
   const [score, setScore] = useState<number>(0);
 
   return (
-    <div>
+    <section>
       <ScoreCounter score={score} totalQuestions={questions.length} />
 
       {questions.map((question, index) => (
@@ -20,6 +20,6 @@ export default function InteractivePage() {
           onLineClick={() => setScore((prev) => prev + 1)}
         />
       ))}
-    </div>
+    </section>
   );
 }
