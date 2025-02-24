@@ -9,6 +9,8 @@ import {
   updateDoc,
   deleteDoc,
   doc,
+  where,
+  getDocs,
 } from "firebase/firestore";
 import { db } from "../../../lib/firebaseClient";
 import { Question } from "../../../types/Question";
@@ -51,6 +53,33 @@ export default function QnAPage() {
     }
   };
 
+  // Mark a question as the main question
+  const makeMainQuestion = async (id: string) => {
+    try {
+      // Find any question that is currently the main question
+      const mainQuery = query(
+        collection(db, "questions"),
+        where("main", "==", true)
+      );
+      const snapshot = await getDocs(mainQuery);
+
+      // For each question currently marked as main, unset the flag
+      snapshot.forEach(async (docSnap) => {
+        await updateDoc(doc(db, "questions", docSnap.id), {
+          main: false,
+        });
+      });
+
+      // Update the selected question to be main and accepted
+      await updateDoc(doc(db, "questions", id), {
+        main: true,
+        accepted: true,
+      });
+    } catch (err) {
+      console.error("Failed to set main question:", err);
+    }
+  };
+
   return (
     <main className="p-4 max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">Q&A Management</h1>
@@ -70,6 +99,12 @@ export default function QnAPage() {
                   }`}
                 >
                   {q.accepted ? "Accepted" : "Accept"}
+                </button>
+                <button
+                  onClick={() => makeMainQuestion(q.id)}
+                  className="px-3 py-1 rounded bg-blue-200"
+                >
+                  Make Main
                 </button>
                 <button
                   onClick={() => removeQuestion(q.id)}

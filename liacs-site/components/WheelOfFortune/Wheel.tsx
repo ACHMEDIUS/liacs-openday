@@ -27,11 +27,12 @@ const Wheel: React.FC = () => {
 
     const spins = Math.floor(Math.random() * 3) + 5; // between 5 and 7 spins
     const sectionAngle = 360 / sections.length;
-    const selectedSectionAngle = selectedSection * sectionAngle + sectionAngle / 2;
+    const selectedSectionAngle =
+      selectedSection * sectionAngle + sectionAngle / 2;
     const currentRotationNormalized = ((rotation % 360) + 360) % 360;
     const angleToRotate =
       spins * 360 +
-      (360 - selectedSectionAngle - currentRotationNormalized) % 360;
+      ((360 - selectedSectionAngle - currentRotationNormalized) % 360);
     const newRotation = rotation + angleToRotate;
     setRotation(newRotation);
 
@@ -73,7 +74,9 @@ const Wheel: React.FC = () => {
       const currentRotation = startRotation + totalRotation * easedProgress;
       const sectionAngle = 360 / sections.length;
       const currentRotationNormalized = ((currentRotation % 360) + 360) % 360;
-      const currentSectionIndex = Math.floor(currentRotationNormalized / sectionAngle);
+      const currentSectionIndex = Math.floor(
+        currentRotationNormalized / sectionAngle
+      );
       if (currentSectionIndex !== lastSectionIndex) {
         lastSectionIndex = currentSectionIndex;
         pointer.classList.add("pointer-animate");
@@ -126,7 +129,7 @@ const Wheel: React.FC = () => {
   return (
     <section className="relative w-screen h-screen overflow-hidden bg-white">
       {/* Wheel */}
-      <section className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[70vh] h-[70vh] rounded-full overflow-hidden shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+      <section className="absolute top-[40%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[50vh] h-[50vh] rounded-full overflow-hidden shadow-[0_0_15px_rgba(0,0,0,0.5)]">
         <svg
           viewBox="0 0 1000 1000"
           className="w-full h-full"
@@ -167,7 +170,7 @@ const Wheel: React.FC = () => {
       <button
         onClick={spinWheel}
         disabled={spinning}
-        className="absolute bottom-12 left-1/2 transform -translate-x-1/2 py-4 px-8 text-xl border-2 border-black rounded-full bg-gray-300 text-black transition-all duration-300 hover:bg-black hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+        className="absolute bottom-20 left-1/2 transform -translate-x-1/2 py-4 px-8 text-xl border-2 border-black rounded-full bg-gray-300 text-black transition-all duration-300 hover:bg-black hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Spin
       </button>

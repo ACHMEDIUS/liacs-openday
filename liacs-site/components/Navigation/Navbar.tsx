@@ -28,15 +28,11 @@ export default function Navbar() {
 
       {/* Center: Navigation Links */}
       <section className="flex justify-center space-x-8">
-        <Link href="/wheel" className="font-bold">
-          Wheel
-        </Link>
-        <Link href="/interactive" className="font-bold">
-          Interactive
-        </Link>
-        <Link href="/qna" className="font-bold">
-          Q&A
-        </Link>
+        <Link href="/wheel">Wheel</Link>
+        <Link href="/interactive">Interactive</Link>
+        <Link href="/qna">Q&A</Link>
+        <Link href="/presentation">Presentation</Link>
+        <Link href="/questions">Questions</Link>
       </section>
 
       {/* Right: Login/Logout */}
