@@ -1,13 +1,21 @@
 import admin from 'firebase-admin';
+import * as fs from 'fs';
+import * as path from 'path';
 
 if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-      clientEmail: process.env.NEXT_PUBLIC_FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.NEXT_PUBLIC_FIREBASE_PRIVATE_KEY,
-    }),
-  });
+  try {
+    const serviceAccount = JSON.parse(
+      fs.readFileSync(path.join(process.cwd(), 'firebaseSdkData.json'), 'utf8')
+    );
+
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+    });
+    
+    console.log('Firebase Admin SDK initialized successfully');
+  } catch (error) {
+    console.error('Firebase Admin SDK initialization error:', error);
+  }
 }
 
 export { admin };

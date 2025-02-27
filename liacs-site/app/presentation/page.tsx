@@ -25,12 +25,18 @@ export default function MainQuestionPage() {
   }, []);
 
   return (
-    <main className="p-4 max-w-2xl mx-auto">
-      {mainQuestion ? (
-        <p className="text-2xl font-bold mb-4">{mainQuestion.text}</p>
-      ) : (
-        <p className="text-2xl font-bold mb-4">Nog geen vragen.</p>
-      )}
+    <main className="flex items-center justify-center h-screen p-4">
+      <div className="max-w-4xl mx-auto text-center">
+        {mainQuestion ? (
+          <p className="text-5xl font-bold leading-tight tracking-tight text-black">
+            {mainQuestion.text}
+          </p>
+        ) : (
+          <p className="text-4xl font-bold leading-tight tracking-tight text-black">
+            Nog geen vragen.
+          </p>
+        )}
+      </div>
     </main>
   );
 }

@@ -73,44 +73,37 @@ function LoginPageContent() {
   );
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-100">
+    <main className="min-h-screen flex items-center justify-center">
       <form
         onSubmit={handleLogin}
-        className="bg-white p-6 rounded shadow-md w-full max-w-sm"
+        className="bg-white p-6 rounded shadow-lg w-full max-w-sm"
       >
-        <h1 className="text-xl font-bold mb-4">Login</h1>
         {error && <p className="text-red-500 mb-2">{error}</p>}
         <section className="mb-4">
-          <label htmlFor="email" className="block font-semibold mb-1">
-            Email
-          </label>
           <input
             id="email"
             type="email"
-            className="border p-2 w-full"
+            className="border p-2 w-full text-black placeholder-gray-400"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="name@example.com"
+            placeholder="Email"
             required
           />
         </section>
         <section className="mb-4">
-          <label htmlFor="password" className="block font-semibold mb-1">
-            Password
-          </label>
           <input
             id="password"
             type="password"
-            className="border p-2 w-full"
+            className="border p-2 w-full text-gray-400"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="********"
+            placeholder="Password"
             required
           />
         </section>
         <button
           type="submit"
-          className="bg-blue-500 text-white py-2 px-4 w-full rounded hover:bg-blue-600"
+          className="bg-leiden text-white py-2 px-4 w-full rounded hover:bg-blue-600"
         >
           Log In
         </button>

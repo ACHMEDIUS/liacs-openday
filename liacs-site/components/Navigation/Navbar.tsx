@@ -12,15 +12,15 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="grid grid-cols-3 items-center p-4 bg-white text-black shadow-md">
+    <nav className="grid grid-cols-3 items-center p-4  text-white shadow-md bg-leiden">
       {/* Left: Logo linking to home */}
       <section>
         <Link href="/">
           <Image
-            src="/UniversiteitLeidenLogo.svg"
+            src="/UniLeidenLogo.png"
             alt="Leiden University Logo"
-            width={75}
-            height={33} // aspect ratio ~799x353
+            width={100}
+            height={50}
             priority
           />
         </Link>
@@ -28,21 +28,25 @@ export default function Navbar() {
 
       {/* Center: Navigation Links */}
       <section className="flex justify-center space-x-8">
-        <Link href="/wheel">Wheel</Link>
-        <Link href="/interactive">Interactive</Link>
-        <Link href="/qna">Q&A</Link>
-        <Link href="/presentation">Presentation</Link>
-        <Link href="/questions">Questions</Link>
+        {user && (
+          <>
+            <Link href="/wheel">Wheel</Link>
+            <Link href="/interactive">Interactive</Link>
+            <Link href="/qna">Q&A</Link>
+            <Link href="/presentation">Presentation</Link>
+            <Link href="/questions">Questions</Link>
+          </>
+        )}
       </section>
 
       {/* Right: Login/Logout */}
-      <section className="flex justify-end">
+      <section className="flex justify-end text-white">
         {user ? (
-          <Link href="/logout" className="text-black hover:underline">
+          <Link href="/logout" className="hover:underline">
             Logout
           </Link>
         ) : (
-          <Link href="/login" className="text-black hover:underline">
+          <Link href="/login" className="hover:underline">
             Login
           </Link>
         )}

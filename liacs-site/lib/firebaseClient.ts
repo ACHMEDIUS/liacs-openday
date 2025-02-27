@@ -2,13 +2,13 @@ import { initializeApp, getApps, FirebaseApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+  apiKey: "AIzaSyCsdjJmmHggPLxcR4TBkVKkWdHotbLGDS0",
+  authDomain: "liacs-openday.firebaseapp.com",
+  projectId: "liacs-openday",
+  storageBucket: "liacs-openday.firebasestorage.app",
+  messagingSenderId: "190434404800",
+  appId: "1:190434404800:web:eed490f17d86c7400cc025",
+  measurementId: "G-X2VDZQ5KMQ"
 };
 
 let firebaseApp: FirebaseApp;

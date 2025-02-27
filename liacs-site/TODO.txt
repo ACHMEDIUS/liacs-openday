@@ -3,3 +3,4 @@
 3. Rewrite to use tailwind
 4. Login page
 5. QnA page
+6. Color palette

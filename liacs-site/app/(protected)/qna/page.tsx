@@ -82,33 +82,33 @@ export default function QnAPage() {
 
   return (
     <main className="p-4 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Q&A Management</h1>
+      <h1 className="text-2xl font-bold mb-4 text-black">Q&A Management</h1>
 
       {questions.length === 0 ? (
-        <p>No questions submitted yet.</p>
+        <p className="text-black">No questions submitted yet.</p>
       ) : (
         <ul className="space-y-4">
           {questions.map((q) => (
             <li key={q.id} className="border p-4 rounded">
-              <p className="mb-2">{q.text}</p>
+              <p className="mb-2 text-black">{q.text}</p>
               <section className="flex gap-2">
                 <button
                   onClick={() => toggleAccept(q.id, q.accepted)}
-                  className={`px-3 py-1 rounded ${
-                    q.accepted ? "bg-green-200" : "bg-gray-200"
+                  className={`px-3 py-1 rounded text-white ${
+                    q.accepted ? "bg-green-500" : "bg-gray-200"
                   }`}
                 >
                   {q.accepted ? "Accepted" : "Accept"}
                 </button>
                 <button
                   onClick={() => makeMainQuestion(q.id)}
-                  className="px-3 py-1 rounded bg-blue-200"
+                  className="px-3 py-1 rounded bg-leiden text-white"
                 >
                   Make Main
                 </button>
                 <button
                   onClick={() => removeQuestion(q.id)}
-                  className="px-3 py-1 rounded bg-red-200"
+                  className="px-3 py-1 rounded bg-red-500 text-white"
                 >
                   Delete
                 </button>

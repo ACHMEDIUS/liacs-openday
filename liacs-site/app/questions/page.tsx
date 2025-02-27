@@ -36,14 +36,14 @@ export default function QuestionsPage() {
 
   return (
     <main className="p-4 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Accepted Questions</h1>
+      <h1 className="text-2xl font-bold mb-4 text-black">Accepted Questions</h1>
 
       {questions.length === 0 ? (
-        <p>No questions yet. Be the first to add one!</p>
+        <p className="text-leiden">No questions yet. Be the first to add one!</p>
       ) : (
         <ul className="space-y-2">
           {questions.map((q) => (
-            <li key={q.id} className="border-b pb-2">
+            <li key={q.id} className="border-b pb-2 text-black">
               {q.text}
             </li>
           ))}
@@ -53,7 +53,7 @@ export default function QuestionsPage() {
       <section className="mt-6">
         <Link
           href="/questions/add"
-          className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="inline-block bg-leiden text-white px-4 py-2 rounded hover:bg-blue-700"
         >
           + Add a Question
         </Link>
