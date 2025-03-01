@@ -12,6 +12,7 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
         leiden: "#001158",
+        science: "#f46e32",
       },
     },
   },

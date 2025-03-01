@@ -27,10 +27,10 @@ export default function AddQuestionPage() {
 
   return (
     <main className="p-4 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Submit a Question</h1>
+      <h1 className="text-2xl font-bold mb-4 text-black">Submit a Question</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <textarea
-          className="w-full h-24 border p-2"
+          className="w-full h-24 border p-2 text-black"
           placeholder="Type your question here..."
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -38,7 +38,7 @@ export default function AddQuestionPage() {
         />
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="bg-leiden text-white px-4 py-2 rounded hover:bg-blue-700 w-full"
         >
           Submit
         </button>

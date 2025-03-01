@@ -27,7 +27,7 @@ export default function Navbar() {
       </section>
 
       {/* Center: Navigation Links */}
-      <section className="flex justify-center space-x-8">
+      <section className="relative z-10 flex justify-center space-x-8">
         {user && (
           <>
             <Link href="/wheel">Wheel</Link>

@@ -33,7 +33,7 @@ export default function MainQuestionPage() {
           </p>
         ) : (
           <p className="text-4xl font-bold leading-tight tracking-tight text-black">
-            Nog geen vragen.
+            No questions yet
           </p>
         )}
       </div>

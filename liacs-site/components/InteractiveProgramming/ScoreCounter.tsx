@@ -3,13 +3,16 @@ interface ScoreCounterProps {
   totalQuestions: number;
 }
 
-const ScoreCounter: React.FC<ScoreCounterProps> = ({ score, totalQuestions }) => {
+const ScoreCounter: React.FC<ScoreCounterProps> = ({
+  score,
+  totalQuestions,
+}) => {
   return (
-    <section className="text-center p-4 bg-black-100">
-      <h1 className="text-2xl font-bold">
+    <div>
+      <h1 className="text-2xl font-bold text-black">
         Score: {score} / {totalQuestions}
       </h1>
-    </section>
+    </div>
   );
 };
 

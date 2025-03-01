@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState } from "react";
 
 interface QuestionBoxProps {
   codeSnippet: string;
@@ -12,99 +12,59 @@ const QuestionBox: React.FC<QuestionBoxProps> = ({
   correctLineNumber,
   onLineClick,
 }) => {
-  const codeLines = codeSnippet.trimEnd().split('\n'); // Split code into lines
-  const [clickedLine, setClickedLine] = useState<number | null>(null); // Track clicked line
-  const [isAnswered, setIsAnswered] = useState<boolean>(false); // Track if the question is answered
+  const codeLines = codeSnippet.trimEnd().split("\n");
+  const [clickedLine, setClickedLine] = useState<number | null>(null);
+  const [isAnswered, setIsAnswered] = useState<boolean>(false);
 
-  // Handle line click and trigger correct/incorrect visual states
   const handleClick = (index: number) => {
-    if (isAnswered) return; // Ignore clicks if already selected
-    setClickedLine(index); // Set the clicked line index
-    setIsAnswered(true); // Mark this question as answered
+    if (isAnswered) return;
+    setClickedLine(index);
+    setIsAnswered(true);
     if (index === correctLineNumber) {
-      onLineClick(); // Increment the score if correct line clicked
+      onLineClick();
     }
   };
 
   return (
-    <section
-      
-      // sx={{
-      //   width: '90%',
-      //   marginBottom: 4,
-      //   backgroundColor: "#1e1e1e",
-      //   color: "#fff",
-      //   borderRadius: '0.5rem',
-      // }}
-      className="width-9/10 margin-b-xs border-2 border-gray-600 rounded-lg"
-    >
-      <section>
-        <section className=''>
-          {/* sx={{ display: 'flex', flexDirection: 'column' }} */}
-          {codeLines.map((line, index) => {
-            // Determine the background color based on whether the line is clicked and correct
-            let backgroundColor = 'transparent';
-            if (isAnswered) {
-              backgroundColor = index === correctLineNumber ? '#2ecc71' : clickedLine === index ? '#e74c3c' : 'transparent';
-            }
+    // Removed w-11/12 so it matches the container width
+    <section className="mb-4 bg-gray-800 text-white rounded-lg p-4">
+      {codeLines.map((line, index) => {
+        const isCorrect = isAnswered && index === correctLineNumber;
+        const isWrong =
+          isAnswered && index === clickedLine && index !== correctLineNumber;
 
-            return (
-              <section
-                key={index}
-                className="line-container"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  lineHeight: '1.5rem',
-                  margin: 0,
-                  padding: '4px 0',
-                  cursor: isAnswered ? 'default' : 'pointer',
-                  backgroundColor: backgroundColor,
-                  transition: 'background-color 0.2s ease-in-out',
-                }}
-                onClick={() => handleClick(index)}
-                onMouseEnter={(e) => {
-                  if (!isAnswered) {
-                    e.currentTarget.style.backgroundColor = '#333'; // Darker background on hover if not answered
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isAnswered) {
-                    e.currentTarget.style.backgroundColor = 'transparent'; // Revert to original if not answered
-                  }
-                }}
-              >
-                <span
-                  className="text-gray-400 select-none"
-                  style={{
-                    width: '30px',
-                    textAlign: 'right',
-                    marginRight: '10px',
-                    fontFamily: 'monospace',
-                    lineHeight: 'inherit',
-                  }}
-                >
-                  {index + 1}
-                </span>
+        let bgColorClasses = "";
+        if (isCorrect) {
+          bgColorClasses = "bg-green-500";
+        } else if (isWrong) {
+          bgColorClasses = "bg-red-500";
+        }
 
-                <pre
-                  style={{
-                    whiteSpace: 'pre-wrap',
-                    margin: 0,
-                    fontFamily: 'monospace',
-                    flex: 1,
-                    padding: 0,
-                    display: 'inline',
-                    lineHeight: 'inherit',
-                  }}
-                >
-                  {line}
-                </pre>
-              </section>
-            );
-          })}
-        </section>
-      </section>
+        return (
+          <div
+            key={index}
+            className={`
+              flex items-center
+              transition-colors duration-200 ease-in-out
+              py-1 px-2
+              ${bgColorClasses}
+              ${
+                !isAnswered
+                  ? "hover:bg-gray-700 cursor-pointer"
+                  : "cursor-default"
+              }
+            `}
+            onClick={() => handleClick(index)}
+          >
+            <span className="text-gray-400 select-none w-8 text-right mr-2 font-mono">
+              {index + 1}
+            </span>
+            <pre className="whitespace-pre-wrap m-0 font-mono flex-1">
+              {line}
+            </pre>
+          </div>
+        );
+      })}
     </section>
   );
 };

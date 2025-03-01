@@ -53,7 +53,7 @@ export default function QuestionsPage() {
       <section className="mt-6">
         <Link
           href="/questions/add"
-          className="inline-block bg-leiden text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="inline-block bg-leiden text-white px-4 py-2 rounded hover:bg-leiden-dark"
         >
           + Add a Question
         </Link>

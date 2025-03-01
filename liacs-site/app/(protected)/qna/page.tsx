@@ -95,16 +95,18 @@ export default function QnAPage() {
                 <button
                   onClick={() => toggleAccept(q.id, q.accepted)}
                   className={`px-3 py-1 rounded text-white ${
-                    q.accepted ? "bg-green-500" : "bg-gray-200"
+                  q.accepted ? "bg-green-500" : "bg-gray-200"
                   }`}
                 >
                   {q.accepted ? "Accepted" : "Accept"}
                 </button>
                 <button
                   onClick={() => makeMainQuestion(q.id)}
-                  className="px-3 py-1 rounded bg-leiden text-white"
+                  className={`px-3 py-1 rounded text-white ${
+                  q.main ? "bg-leiden" : "bg-yellow-500"
+                  }`}
                 >
-                  Make Main
+                  {q.main ? "Main Question" : "Make Main"}
                 </button>
                 <button
                   onClick={() => removeQuestion(q.id)}
