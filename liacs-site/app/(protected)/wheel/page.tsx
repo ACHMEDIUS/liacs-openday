@@ -4,9 +4,12 @@ import Wheel, { WheelOption } from "../../../components/WheelOfFortune/Wheel";
 const options: WheelOption[] = [
   { label: "Niks", odds: 35 },
   { label: "Opnieuw", odds: 35 },
-  { label: "Pen", odds: 10 },
-  { label: "Beker", odds: 10 },
-  { label: "T-Shirt", odds: 10 },
+  { label: "Sleutelhanger", odds: 8 },
+  { label: "Notitie blok", odds: 5 },
+  { label: "Kaarten", odds: 4 },
+  { label: "Mok", odds: 1 },
+  { label: "Stickers", odds: 5 },
+  { label: "Stress bal", odds: 12},
 ];
 
 export default function WheelPage() {

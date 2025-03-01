@@ -221,7 +221,7 @@ const Wheel: React.FC<WheelProps> = ({ options, wheelSize = 50 }) => {
                     x="500"
                     y="150"
                     textAnchor="middle"
-                    className="font-bold select-none drop-shadow-lg"
+                    className="font-bold select-none drop-shadow-lg text-3xl"
                     fill="white"
                     fontSize="50"
                     transform={`rotate(${rotateText}, 500, 500)`}
