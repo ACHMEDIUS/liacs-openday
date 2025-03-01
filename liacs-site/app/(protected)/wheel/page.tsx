@@ -7,9 +7,8 @@ const options: WheelOption[] = [
   { label: "Sleutelhanger", odds: 8 },
   { label: "Notitie blok", odds: 5 },
   { label: "Kaarten", odds: 4 },
-  { label: "Mok", odds: 1 },
   { label: "Stickers", odds: 5 },
-  { label: "Stress bal", odds: 12},
+  { label: "Stress bal", odds: 13},
 ];
 
 export default function WheelPage() {

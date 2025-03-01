@@ -62,19 +62,6 @@ console.log(greet(42));
     correctLineNumber: 4,
   },
 
-  // 5. C snippet: Missing semicolon after variable declaration
-  {
-    codeSnippet: `
-#include <stdio.h>
-int main() {
-    int x = 10
-    printf("Value: %d\n", x);
-    return 0;
-}
-`,
-    correctLineNumber: 2,
-  },
-
   // 6. C++ snippet: Using an undefined variable 'y'
   {
     codeSnippet: `
@@ -93,7 +80,7 @@ int main() {
   // 7. Ruby snippet: Incorrect number of arguments passed to the method
   {
     codeSnippet: `
-def add(a, b)
+def add(a, b):
   a + b
 end
 puts add(2, 3)
@@ -115,20 +102,6 @@ func main() {
 }
 `,
     correctLineNumber: 6,
-  },
-
-  // 9. PHP snippet: Typo in the function call ('sayHelo' instead of 'sayHello')
-  {
-    codeSnippet: `
-<?php
-function sayHello($name) {
-    return "Hello, " . $name;
-}
-echo sayHello("World");
-echo sayHelo("User");
-?>
-`,
-    correctLineNumber: 5,
   },
 
   // 10. SQL snippet: Misspelled column name in the ORDER BY clause
