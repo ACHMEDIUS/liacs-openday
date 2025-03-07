@@ -1,5 +1,18 @@
-1. Loading component
+TODO:
+1. Loading component and correct loading based on http responses/requests
 2. Home page
 4. Login page
 5. QnA page
 6. Color palette
+7. Register page
+8. Page title
+9. User toast when editing 
+10. Wheel page
+11. Rename pages and titles (Q&A to admin, Presentation to ?, Questions to ?, Wheel to ?, Interactive to challenge)
+12. CMS
+13. Responsiveness, Mobile friendly
+
+Done:
+1. YouTube embeded autoplay
+2. Coding challenge 
+3. Presentation page

@@ -34,7 +34,7 @@ const YouTubeToggle: React.FC = () => {
     <div className="fixed bottom-4 right-4 w-[270px] h-[600px] shadow-lg border border-gray-300 bg-white">
       <iframe
         title="YouTube"
-        src="https://www.youtube.com/embed/zZ7AimPACzc?start=120"
+        src="https://www.youtube.com/embed/zZ7AimPACzc?start=120&autoplay=1&mute=1"
         className="w-full h-full"
         frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
