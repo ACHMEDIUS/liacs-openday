@@ -1,0 +1,28 @@
+{
+  "name": "LIACS Open Day",
+  "short_name": "LIACS Open Day",
+  "description": "Interactive activities and information for the LIACS Open Day event at Leiden University",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1f2937",
+  "orientation": "portrait-primary",
+  "categories": ["education", "university", "computer-science"],
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/UniLeidenLogo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/building.jpg",
+      "sizes": "any",
+      "type": "image/jpeg",
+      "form_factor": "wide"
+    }
+  ]
+}
