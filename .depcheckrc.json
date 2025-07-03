@@ -1,0 +1,13 @@
+{
+  "ignorePatterns": ["test", "coverage", ".next", "out", "functions"],
+  "ignoreMatches": [
+    "@types/*",
+    "eslint-config-*",
+    "prettier-plugin-*",
+    "@testing-library/*",
+    "@vitest/*",
+    "@vitejs/*"
+  ],
+  "skipMissing": false,
+  "ignoreDirs": [".next", "out", "node_modules", "coverage", "functions"]
+}
