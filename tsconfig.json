@@ -30,6 +30,7 @@
     "**/*.test.tsx",
     "**/*.spec.ts",
     "**/*.spec.tsx",
-    "vitest.config.ts"
+    "vitest.config.ts",
+    "functions/**/*"
   ]
 }
