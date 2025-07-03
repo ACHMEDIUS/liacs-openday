@@ -33,8 +33,8 @@ export default function LoginPage() {
       }
 
       router.push('/admin');
-    } catch (error: any) {
-      setError(error.message || 'Authentication failed');
+    } catch (error) {
+      setError((error as Error).message || 'Authentication failed');
     } finally {
       setIsLoading(false);
     }

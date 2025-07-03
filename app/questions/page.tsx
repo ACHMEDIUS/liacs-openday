@@ -166,7 +166,7 @@ export default function QuestionsPage() {
     return matchesSearch && matchesLanguage && matchesDifficulty;
   });
 
-  const updateFormField = (field: string, value: any) => {
+  const updateFormField = (field: string, value: string | number | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
