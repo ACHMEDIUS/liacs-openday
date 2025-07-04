@@ -1,7 +1,7 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: 'AIzaSyCsdjJmmHggPLxcR4TBkVKkWdHotbLGDS0',
   authDomain: 'liacs-openday.firebaseapp.com',
   projectId: 'liacs-openday',

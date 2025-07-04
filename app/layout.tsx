@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import ClientLayout from './client-layout';
+import AnalyticsProvider from './analytics';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -86,6 +87,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} max-w-svw m-0 flex min-h-screen flex-col bg-white p-0 antialiased`}
       >
+        <AnalyticsProvider />
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
