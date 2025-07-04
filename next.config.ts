@@ -5,11 +5,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 });
 
 const nextConfig: NextConfig = {
-  output: 'export',
   trailingSlash: true,
-  images: {
-    unoptimized: true,
-  },
   experimental: {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-slot'],
   },
