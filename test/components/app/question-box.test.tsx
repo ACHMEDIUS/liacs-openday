@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import QuestionBox from '@/components/app/question-box';
 
 describe('QuestionBox', () => {
@@ -8,6 +8,10 @@ describe('QuestionBox', () => {
     correctLineNumber: 1,
     onLineClick: vi.fn(),
   };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('renders code lines correctly', () => {
     render(<QuestionBox {...mockProps} />);

@@ -54,7 +54,8 @@ export default function WheelPage() {
     if (!wheelSettings.soundEnabled) return;
 
     // Create a simple beep sound
-    const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+    const audioContext = new (window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
 
@@ -74,7 +75,8 @@ export default function WheelPage() {
     if (!wheelSettings.soundEnabled) return;
 
     // Create a celebration sound
-    const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+    const audioContext = new (window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
 
     [523, 659, 784, 1047].forEach((freq, index) => {
       const oscillator = audioContext.createOscillator();

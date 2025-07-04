@@ -1,27 +1,37 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { submitQuestion, getQuestions, updateScore } from '@/lib/firebase-functions';
 
 // Mock Firebase auth
-const mockGetIdToken = vi.fn();
-const mockUser = { getIdToken: mockGetIdToken };
-
 vi.mock('firebase/auth', () => ({
   getAuth: vi.fn(() => ({
-    currentUser: mockUser,
+    currentUser: {
+      getIdToken: vi.fn().mockResolvedValue('mock-token'),
+    },
   })),
 }));
 
 // Mock Firebase functions
-const mockHttpsCallable = vi.fn();
 vi.mock('firebase/functions', () => ({
   getFunctions: vi.fn(),
-  httpsCallable: vi.fn(() => mockHttpsCallable),
+  httpsCallable: vi.fn(() => vi.fn()),
 }));
 
+import { submitQuestion, getQuestions, updateScore } from '@/lib/firebase-functions';
+import { getAuth } from 'firebase/auth';
+import { httpsCallable } from 'firebase/functions';
+
 describe('Firebase Functions', () => {
+  const mockHttpsCallable = vi.fn();
+
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetIdToken.mockResolvedValue('mock-token');
+    vi.mocked(httpsCallable).mockReturnValue(mockHttpsCallable);
+
+    // Reset getAuth to return authenticated user by default
+    vi.mocked(getAuth).mockReturnValue({
+      currentUser: {
+        getIdToken: vi.fn().mockResolvedValue('mock-token'),
+      },
+    } as any);
   });
 
   describe('submitQuestion', () => {
@@ -30,7 +40,6 @@ describe('Firebase Functions', () => {
 
       const result = await submitQuestion('Test question');
 
-      expect(mockGetIdToken).toHaveBeenCalled();
       expect(mockHttpsCallable).toHaveBeenCalledWith({
         question: { text: 'Test question' },
         userToken: 'mock-token',
@@ -39,9 +48,9 @@ describe('Firebase Functions', () => {
     });
 
     it('throws error when user not authenticated', async () => {
-      vi.mocked(vi.mocked(require('firebase/auth')).getAuth).mockReturnValue({
+      vi.mocked(getAuth).mockReturnValue({
         currentUser: null,
-      });
+      } as any);
 
       await expect(submitQuestion('Test question')).rejects.toThrow('User not authenticated');
     });
@@ -54,7 +63,6 @@ describe('Firebase Functions', () => {
 
       const result = await getQuestions();
 
-      expect(mockGetIdToken).toHaveBeenCalled();
       expect(mockHttpsCallable).toHaveBeenCalledWith({ userToken: 'mock-token' });
       expect(result).toEqual(mockQuestions);
     });
@@ -66,7 +74,6 @@ describe('Firebase Functions', () => {
 
       const result = await updateScore(100);
 
-      expect(mockGetIdToken).toHaveBeenCalled();
       expect(mockHttpsCallable).toHaveBeenCalledWith({
         score: 100,
         userToken: 'mock-token',

@@ -13,13 +13,13 @@ describe('LoadingSpinner', () => {
   it('has the correct styling', () => {
     render(<LoadingSpinner />);
 
-    const container = screen.getByRole('status', { hidden: true }).parentElement;
+    const container = screen.getByRole('status');
     expect(container).toHaveClass(
       'flex',
+      'h-screen',
+      'w-full',
       'items-center',
       'justify-center',
-      'w-full',
-      'h-screen',
       'bg-white'
     );
   });

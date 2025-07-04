@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import firebaseApp from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [isSignUp, setIsSignUp] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -25,13 +24,7 @@ export default function LoginPage() {
 
     try {
       const auth = getAuth(firebaseApp);
-
-      if (isSignUp) {
-        await createUserWithEmailAndPassword(auth, email, password);
-      } else {
-        await signInWithEmailAndPassword(auth, email, password);
-      }
-
+      await signInWithEmailAndPassword(auth, email, password);
       router.push('/admin');
     } catch (error) {
       setError((error as Error).message || 'Authentication failed');
@@ -44,14 +37,8 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center px-4">
       <Card className="w-full max-w-lg">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-leiden">
-            {isSignUp ? 'Create Account' : 'Sign In'}
-          </CardTitle>
-          <CardDescription>
-            {isSignUp
-              ? 'Create your account to access LIACS Open Day'
-              : 'Sign in to your account to continue'}
-          </CardDescription>
+          <CardTitle className="text-2xl font-bold text-leiden">Sign In</CardTitle>
+          <CardDescription>Sign in to your account to continue</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -85,19 +72,9 @@ export default function LoginPage() {
               className="w-full bg-leiden hover:bg-leiden/90"
               disabled={isLoading}
             >
-              {isLoading ? 'Please wait...' : isSignUp ? 'Create Account' : 'Sign In'}
+              {isLoading ? 'Please wait...' : 'Sign In'}
             </Button>
           </form>
-
-          <div className="mt-4 text-center">
-            <Button
-              variant="ghost"
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="text-leiden hover:text-leiden/80"
-            >
-              {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
-            </Button>
-          </div>
         </CardContent>
       </Card>
     </div>

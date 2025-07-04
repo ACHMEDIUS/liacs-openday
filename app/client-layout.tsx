@@ -3,13 +3,9 @@ import Navbar from '../components/core/navbar';
 import Link from 'next/link';
 import { useAuth } from '../hooks/use-auth';
 
-export default function ClientLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
-  
+
   return (
     <>
       <Navbar user={user} loading={loading} />
