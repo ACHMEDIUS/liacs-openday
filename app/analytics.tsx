@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { useEffect } from "react";
-import { firebaseConfig } from "@/lib/firebase";
+import { initializeApp } from 'firebase/app';
+import { getAnalytics } from 'firebase/analytics';
+import { useEffect } from 'react';
+import { firebaseConfig } from '@/lib/firebase';
 
 export default function AnalyticsProvider() {
   useEffect(() => {
