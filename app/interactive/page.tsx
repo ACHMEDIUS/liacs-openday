@@ -1,12 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Code, CheckCircle, XCircle, Trophy } from 'lucide-react';
+import { Code, CheckCircle, XCircle, Trophy } from 'lucide-react';
 
 interface Question {
   id: string;
@@ -83,7 +82,7 @@ print(result)`,
 ];
 
 export default function InteractivePage() {
-  const { user, loading } = useAuth();
+  // Removed authentication requirement - interactive programming is now publicly accessible
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
@@ -132,30 +131,7 @@ export default function InteractivePage() {
   const isCorrect = selectedAnswer === sampleQuestions[currentQuestion].correctAnswer;
   const isCompleted = answeredQuestions.every(answered => answered);
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center px-4">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="text-center">Access Denied</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-center text-muted-foreground">
-              Please log in to access the interactive programming challenge.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  // Interactive programming is now publicly accessible - no authentication checks needed
 
   const question = sampleQuestions[currentQuestion];
 

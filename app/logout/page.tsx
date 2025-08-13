@@ -1,19 +1,32 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/use-auth';
+import { getAuth, signOut } from 'firebase/auth';
+import firebaseApp from '@/lib/firebase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 
 export default function LogoutPage() {
-  const { logout } = useAuth();
   const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     const performLogout = async () => {
+      if (isLoggingOut) return; // Prevent multiple calls
+
+      setIsLoggingOut(true);
+
       try {
-        await logout();
+        // Clear the auth cookie
+        await fetch('/api/logout', {
+          method: 'POST',
+        });
+
+        // Sign out from Firebase
+        const auth = getAuth(firebaseApp);
+        await signOut(auth);
+
         router.push('/');
       } catch (error) {
         console.error('Logout error:', error);
@@ -22,7 +35,7 @@ export default function LogoutPage() {
     };
 
     performLogout();
-  }, [logout, router]);
+  }, []); // Empty dependency array to run only once
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">

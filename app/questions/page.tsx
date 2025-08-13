@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Loader2, Plus, Search, Edit, Trash2 } from 'lucide-react';
+import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 
 interface Question {
   id: string;
@@ -78,7 +77,7 @@ print(result)`,
 ];
 
 export default function QuestionsPage() {
-  const { user, loading } = useAuth();
+  // Removed authentication requirement - Q&A is now publicly accessible
   const [questions, setQuestions] = useState<Question[]>(initialQuestions);
   const [isCreating, setIsCreating] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
@@ -176,30 +175,7 @@ export default function QuestionsPage() {
     setFormData(prev => ({ ...prev, options: newOptions }));
   };
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center px-4">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="text-center">Access Denied</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-center text-muted-foreground">
-              Please log in to manage programming questions.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  // Q&A is now publicly accessible - no authentication checks needed
 
   return (
     <div className="container mx-auto max-w-6xl px-4 py-8">

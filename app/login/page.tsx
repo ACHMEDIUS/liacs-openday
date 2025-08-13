@@ -24,7 +24,24 @@ export default function LoginPage() {
 
     try {
       const auth = getAuth(firebaseApp);
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+      // Get the ID token and set it as a cookie
+      const idToken = await userCredential.user.getIdToken();
+
+      // Call the login API to set the cookie
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ idToken }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to set authentication cookie');
+      }
+
       router.push('/admin');
     } catch (error) {
       setError((error as Error).message || 'Authentication failed');

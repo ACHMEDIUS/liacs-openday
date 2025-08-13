@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '../components/ui/button';
 
 export default function NotFound() {
@@ -12,7 +13,10 @@ export default function NotFound() {
         </p>
       </div>
       <Button asChild>
-        <Link href="/">Return Home</Link>
+        <Link href="/" className="flex items-center space-x-2">
+          <ArrowLeft className="h-4 w-4" />
+          <span>Return Home</span>
+        </Link>
       </Button>
     </div>
   );

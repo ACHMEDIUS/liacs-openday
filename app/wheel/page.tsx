@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, RotateCcw, Sparkles } from 'lucide-react';
+import { RotateCcw, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface WheelSettings {
@@ -35,7 +34,7 @@ const defaultWheelSettings: WheelSettings = {
 };
 
 export default function WheelPage() {
-  const { user, loading } = useAuth();
+  // Removed authentication requirement - wheel is now publicly accessible
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [result, setResult] = useState<string | null>(null);
@@ -170,13 +169,13 @@ export default function WheelPage() {
 
   // Auto-spin if enabled
   useEffect(() => {
-    if (wheelSettings.autoSpin && user && canSpin) {
+    if (wheelSettings.autoSpin && canSpin) {
       const timer = setTimeout(() => {
         spinWheel();
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [wheelSettings.autoSpin, user, canSpin, spinWheel]);
+  }, [wheelSettings.autoSpin, canSpin, spinWheel]);
 
   // Keyboard controls
   useEffect(() => {
@@ -196,30 +195,7 @@ export default function WheelPage() {
     setCanSpin(true);
   };
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center px-4">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="text-center">Access Denied</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-center text-muted-foreground">
-              Please log in to spin the wheel of fortune.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  // Wheel is now publicly accessible - no authentication checks needed
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8">
@@ -302,10 +278,7 @@ export default function WheelPage() {
             size="lg"
           >
             {isSpinning ? (
-              <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Spinning...
-              </>
+              'Spinning...'
             ) : !canSpin ? (
               'Wait...'
             ) : (
@@ -332,7 +305,7 @@ export default function WheelPage() {
         {isSpinning && (
           <div className="mt-6">
             <div className="flex items-center justify-center gap-2 text-leiden">
-              <Loader2 className="h-5 w-5 animate-spin" />
+              <Sparkles className="h-5 w-5 animate-pulse" />
               <span className="text-lg font-semibold">The wheel is spinning...</span>
             </div>
             <div className="mt-2 h-2 overflow-hidden rounded-full bg-gray-200">
