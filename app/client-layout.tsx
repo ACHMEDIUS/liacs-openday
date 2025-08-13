@@ -9,9 +9,13 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   return (
     <I18nProvider>
-      <Navbar user={user} loading={loading} />
-      <main className="flex flex-grow items-center justify-center">{children}</main>
-      <Footer />
+      <div className="flex h-screen w-screen flex-col overflow-hidden">
+        <Navbar user={user} loading={loading} />
+        <main className="flex-1 overflow-auto p-4 lg:flex lg:items-center lg:justify-center lg:p-0">
+          {children}
+        </main>
+        <Footer />
+      </div>
     </I18nProvider>
   );
 }

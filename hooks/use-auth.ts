@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, signOut, User } from 'firebase/auth';
-import { getFunctions, httpsCallable } from 'firebase/functions';
 import firebaseApp from '../lib/firebase';
 
 export const useAuth = () => {
@@ -22,9 +21,12 @@ export const useAuth = () => {
     setLoading(true);
     const auth = getAuth(firebaseApp);
     try {
-      const functions = getFunctions(firebaseApp);
-      const logoutFunction = httpsCallable(functions, 'logout');
-      await logoutFunction();
+      // Call the logout API to clear the cookie
+      await fetch('/api/logout', {
+        method: 'POST',
+      });
+
+      // Sign out from Firebase
       await signOut(auth);
     } catch (error) {
       console.error('Error during logout:', error);

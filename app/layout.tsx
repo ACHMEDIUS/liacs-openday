@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono } from 'next/font/google';
+import localFont from 'next/font/local';
 import './globals.css';
 import ClientLayout from './client-layout';
 import AnalyticsProvider from './analytics';
@@ -11,6 +12,18 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
+});
+
+const bitcount = localFont({
+  src: '../public/fonts/BitcountPropSingle-VariableFont_CRSV,ELSH,ELXP,slnt,wght.ttf',
+  variable: '--font-bitcount',
+  display: 'swap',
+});
+
+const domine = localFont({
+  src: '../public/fonts/Domine-VariableFont_wght.ttf',
+  variable: '--font-domine',
+  display: 'swap',
 });
 
 export const metadata = {
@@ -85,7 +98,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} max-w-svw m-0 flex min-h-screen flex-col bg-white p-0 antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${bitcount.variable} ${domine.variable} max-w-svw m-0 flex min-h-screen flex-col bg-white p-0 antialiased`}
       >
         <AnalyticsProvider />
         <ClientLayout>{children}</ClientLayout>
