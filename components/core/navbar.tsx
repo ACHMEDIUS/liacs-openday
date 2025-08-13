@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
-import { Menu } from 'lucide-react';
-import { useState } from 'react';
+import { LogIn, LogOut, Gamepad2, Languages, Menu } from 'lucide-react';
+import { Logo } from '@/components/core/logo';
+import { useState, useEffect, useRef } from 'react';
+import { useI18n } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { User } from 'firebase/auth';
 import {
@@ -14,214 +15,449 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+  useSidebar,
+} from '@/components/ui/sidebar';
 
 interface NavbarProps {
   user?: User | null;
   loading?: boolean;
 }
 
-export default function Navbar({ user, loading }: NavbarProps) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+function SidebarNavigation({ user, t, language, setLanguage }: { user?: any, t: any, language: string, setLanguage: (lang: string) => void }) {
+  const { setOpenMobile } = useSidebar();
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const closeSidebar = () => {
+    setOpenMobile(false);
   };
+
+  return (
+    <SidebarContent className="bg-leiden text-white border-none">
+      {/* Logo at top */}
+      <div className="flex items-center justify-center border-b border-white/20 p-6">
+        <Link href="/" onClick={closeSidebar}>
+          <Logo />
+        </Link>
+      </div>
+
+      {user ? (
+        <>
+          {/* Apps Section */}
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-white/70">{t.nav.apps}</SidebarGroupLabel>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-white hover:bg-white/10">
+                  <Link href="/wheel" onClick={closeSidebar}>{t.nav.wheelOfFortune}</Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-white hover:bg-white/10">
+                  <Link href="/interactive" onClick={closeSidebar}>{t.nav.interactiveProgramming}</Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-white hover:bg-white/10">
+                  <Link href="/sorting" onClick={closeSidebar}>{t.nav.sortingAlgorithms}</Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
+
+          {/* Presentation Section */}
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-white/70">{t.nav.presentation}</SidebarGroupLabel>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-white hover:bg-white/10">
+                  <Link href="/questions/view" onClick={closeSidebar}>{t.nav.viewQuestions}</Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-white hover:bg-white/10">
+                  <Link href="/questions/add" onClick={closeSidebar}>{t.nav.addQuestions}</Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
+
+          {/* Admin Section */}
+          <SidebarGroup>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-white hover:bg-white/10">
+                  <Link href="/admin" onClick={closeSidebar}>{t.nav.admin}</Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
+
+          {/* Language Selector */}
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-white/70">{t.nav.language}</SidebarGroupLabel>
+            <div className="px-3">
+              <Select value={language} onValueChange={setLanguage}>
+                <SelectTrigger className="w-full border-white/30 bg-white/10 text-white">
+                  <Languages className="mr-2 h-4 w-4" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="en">{t.languages.en}</SelectItem>
+                  <SelectItem value="nl">{t.languages.nl}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </SidebarGroup>
+
+          {/* Logout Button */}
+          <SidebarGroup>
+            <div className="px-3 pb-6">
+              <Button asChild className="w-full bg-red-500 text-white hover:bg-red-600">
+                <Link href="/logout" className="flex items-center justify-center space-x-2" onClick={closeSidebar}>
+                  <LogOut className="h-4 w-4" />
+                  <span>{t.nav.logout}</span>
+                </Link>
+              </Button>
+            </div>
+          </SidebarGroup>
+        </>
+      ) : (
+        <>
+          {/* Unauthenticated Navigation */}
+          <SidebarGroup>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-white hover:bg-white/10">
+                  <Link href="/" onClick={closeSidebar}>{t.nav.home}</Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="text-white hover:bg-white/10">
+                  <Link href="/presentation" onClick={closeSidebar}>{t.nav.presentation}</Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
+
+          {/* Language Selector */}
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-white/70">{t.nav.language}</SidebarGroupLabel>
+            <div className="px-3">
+              <Select value={language} onValueChange={setLanguage}>
+                <SelectTrigger className="w-full border-white/30 bg-white/10 text-white">
+                  <Languages className="mr-2 h-4 w-4" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="en">{t.languages.en}</SelectItem>
+                  <SelectItem value="nl">{t.languages.nl}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </SidebarGroup>
+
+          {/* Login Button */}
+          <SidebarGroup>
+            <div className="px-3 pb-6">
+              <Button
+                asChild
+                variant="outline"
+                className="w-full border-white/30 bg-white/10 text-white hover:bg-white/20"
+              >
+                <Link href="/login" className="flex items-center justify-center space-x-2" onClick={closeSidebar}>
+                  <LogIn className="h-4 w-4" />
+                  <span>{t.nav.login}</span>
+                </Link>
+              </Button>
+            </div>
+          </SidebarGroup>
+        </>
+      )}
+    </SidebarContent>
+  );
+}
+
+export default function Navbar({ user, loading }: NavbarProps) {
+  const { language, setLanguage, t } = useI18n();
+  const [isVisible, setIsVisible] = useState(true);
+  const [isInTopZone, setIsInTopZone] = useState(false);
+  const hideTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const lastActivityRef = useRef<number>(Date.now());
+
+  // Auto-hide after 2 seconds of inactivity
+  useEffect(() => {
+    const resetHideTimer = () => {
+      lastActivityRef.current = Date.now();
+
+      // Clear existing timer
+      if (hideTimerRef.current) {
+        clearTimeout(hideTimerRef.current);
+      }
+
+      // Show navbar immediately when there's activity
+      if (!isInTopZone) {
+        setIsVisible(true);
+      }
+
+      // Set new timer to hide after 2 seconds
+      hideTimerRef.current = setTimeout(() => {
+        if (!isInTopZone) {
+          setIsVisible(false);
+        }
+      }, 2000);
+    };
+
+    // Track mouse movement for activity
+    const handleMouseMove = (e: MouseEvent) => {
+      // Check if mouse is in top 10vh zone
+      const viewportHeight = window.innerHeight;
+      const topZoneHeight = viewportHeight * 0.1; // 10vh
+      const inZone = e.clientY <= topZoneHeight;
+
+      setIsInTopZone(inZone);
+
+      if (inZone) {
+        setIsVisible(true);
+        if (hideTimerRef.current) {
+          clearTimeout(hideTimerRef.current);
+        }
+      } else {
+        resetHideTimer();
+      }
+    };
+
+    // Initial setup
+    resetHideTimer();
+
+    // Add event listeners
+    window.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (hideTimerRef.current) {
+        clearTimeout(hideTimerRef.current);
+      }
+    };
+  }, [isInTopZone]);
 
   if (loading) {
     return null;
   }
 
   return (
-    <nav className="bg-leiden p-4 text-white shadow-md">
-      <div className="flex items-center justify-between">
-        {/* Left: Logo linking to home */}
-        <section>
-          <Link href="/">
-            <Image
-              src="/UniLeidenLogo.png"
-              alt="Leiden University Logo"
-              width={100}
-              height={50}
-              priority
-            />
-          </Link>
-        </section>
+    <>
+      {/* Desktop Dock Navbar */}
+      <nav
+        className={`fixed left-1/2 top-4 z-50 hidden transition-all duration-500 ease-in-out lg:block ${
+          isVisible
+            ? 'translate-x-[-50%] translate-y-0 opacity-100'
+            : 'pointer-events-none -translate-y-8 translate-x-[-50%] opacity-0'
+        }`}
+      >
+        <div className="flex items-center justify-center rounded-2xl border border-gray-200/10 bg-white/10 px-6 py-3 shadow-lg backdrop-blur-sm">
+          {/* Left: Logo */}
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center">
+              <Logo className="mr-6" />
+            </Link>
+          </div>
 
-        {/* Center: Navigation Menu - Hidden on mobile, visible on desktop */}
-        <section className="hidden lg:flex">
+          {/* Center: Navigation */}
           {user && (
-            <NavigationMenu>
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-white hover:text-white/80">
-                    Apps
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <div className="grid w-[400px] gap-3 p-4 md:grid-cols-2">
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href="/wheel"
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">Wheel of Fortune</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Spin the wheel for interactive presentations
-                          </p>
-                        </Link>
-                      </NavigationMenuLink>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href="/interactive"
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">
-                            Interactive Programming
-                          </div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Debug code challenges and test your skills
-                          </p>
-                        </Link>
-                      </NavigationMenuLink>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href="/sorting"
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">Sorting Algorithms</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Visualize and explore sorting algorithms
-                          </p>
-                        </Link>
-                      </NavigationMenuLink>
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-white hover:text-white/80">
-                    Presentation
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <div className="grid w-[300px] gap-3 p-4">
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href="/questions/view"
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">View Questions</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Browse submitted questions
-                          </p>
-                        </Link>
-                      </NavigationMenuLink>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href="/questions/add"
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">Add Questions</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Submit new questions for Q&A
-                          </p>
-                        </Link>
-                      </NavigationMenuLink>
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link
-                      href="/admin"
-                      className="inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10 hover:text-white/80 focus:bg-white/10 focus:outline-none"
-                    >
-                      Admin
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
+            <div className="flex items-center px-4">
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="bg-transparent text-leiden hover:text-leiden/80">
+                      {t.nav.apps}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid gap-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                        <li className="row-span-3">
+                          <NavigationMenuLink asChild>
+                            <div className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md">
+                              <Gamepad2 className="mb-2 h-8 w-8 text-leiden" />
+                              <div className="mb-2 mt-4 text-lg font-medium">{t.nav.games}</div>
+                              <p className="text-sm leading-tight text-muted-foreground">
+                                {t.nav.gamesDescription}
+                              </p>
+                            </div>
+                          </NavigationMenuLink>
+                        </li>
+                        <li>
+                          <NavigationMenuLink asChild>
+                            <Link
+                              href="/wheel"
+                              className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                            >
+                              <div className="text-sm font-medium leading-none">
+                                {t.nav.wheelOfFortune}
+                              </div>
+                              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                {t.nav.wheelDescription}
+                              </p>
+                            </Link>
+                          </NavigationMenuLink>
+                        </li>
+                        <li>
+                          <NavigationMenuLink asChild>
+                            <Link
+                              href="/interactive"
+                              className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                            >
+                              <div className="text-sm font-medium leading-none">
+                                {t.nav.interactiveProgramming}
+                              </div>
+                              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                {t.nav.interactiveDescription}
+                              </p>
+                            </Link>
+                          </NavigationMenuLink>
+                        </li>
+                        <li>
+                          <NavigationMenuLink asChild>
+                            <Link
+                              href="/sorting"
+                              className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                            >
+                              <div className="text-sm font-medium leading-none">
+                                {t.nav.sortingAlgorithms}
+                              </div>
+                              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                {t.nav.sortingDescription}
+                              </p>
+                            </Link>
+                          </NavigationMenuLink>
+                        </li>
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="bg-transparent text-leiden hover:text-leiden/80">
+                      {t.nav.presentation}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <div className="grid w-[300px] gap-3 p-4">
+                        <NavigationMenuLink asChild>
+                          <Link
+                            href="/questions/view"
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                          >
+                            <div className="text-sm font-medium leading-none">
+                              {t.nav.viewQuestions}
+                            </div>
+                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                              {t.nav.viewQuestionsDescription}
+                            </p>
+                          </Link>
+                        </NavigationMenuLink>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            href="/questions/add"
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                          >
+                            <div className="text-sm font-medium leading-none">
+                              {t.nav.addQuestions}
+                            </div>
+                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                              {t.nav.addQuestionsDescription}
+                            </p>
+                          </Link>
+                        </NavigationMenuLink>
+                      </div>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <NavigationMenuLink asChild>
+                      <Link
+                        href="/admin"
+                        className="inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-leiden transition-colors hover:bg-white/10 hover:text-leiden/80 focus:bg-white/10 focus:outline-none"
+                      >
+                        {t.nav.admin}
+                      </Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+            </div>
           )}
-        </section>
 
-        {/* Right: Login/Logout + Mobile Menu Button */}
-        <section className="flex items-center space-x-4">
-          {/* Login/Logout - Always visible on desktop */}
-          <div className="hidden lg:block">
+          {/* Right: Language Selector + Auth Buttons */}
+          <div className="ml-6 flex items-center space-x-3">
+            {/* Language Selector */}
+            <Select value={language} onValueChange={setLanguage}>
+              <SelectTrigger className="h-8 w-[110px] border-leiden/30 text-leiden hover:bg-leiden/5">
+                <Languages className="mr-1 h-4 w-4" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="en">{t.languages.en}</SelectItem>
+                <SelectItem value="nl">{t.languages.nl}</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* Auth Buttons */}
             {user ? (
-              <Button variant="ghost" asChild>
-                <Link href="/logout">Logout</Link>
+              <Button
+                asChild
+                className="bg-red-500 text-white transition-colors hover:bg-red-600"
+                size="sm"
+              >
+                <Link href="/logout" className="flex items-center space-x-2">
+                  <LogOut className="h-4 w-4" />
+                  <span>{t.nav.logout}</span>
+                </Link>
               </Button>
             ) : (
-              <Button variant="ghost" asChild>
-                <Link href="/login">Login</Link>
+              <Button
+                asChild
+                variant="outline"
+                className="border-leiden text-leiden transition-colors hover:bg-leiden hover:text-white"
+                size="sm"
+              >
+                <Link href="/login" className="flex items-center space-x-2">
+                  <LogIn className="h-4 w-4" />
+                  <span>{t.nav.login}</span>
+                </Link>
               </Button>
             )}
           </div>
-
-          {/* Mobile Menu Button - Right aligned */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-white focus:outline-none lg:hidden"
-            onClick={toggleMenu}
-            aria-label="Toggle menu"
-          >
-            <Menu className="h-6 w-6" />
-          </Button>
-        </section>
-      </div>
-
-      {/* Mobile Menu - Slides down when hamburger menu is clicked */}
-      {isMenuOpen && (
-        <div className="mt-4 flex flex-col space-y-4 border-t border-white/20 px-2 pb-2 pt-4 duration-200 animate-in slide-in-from-top-2 lg:hidden">
-          {user ? (
-            <>
-              <div className="py-2 text-sm font-semibold text-white/60">Apps</div>
-              <Link href="/wheel" className="block py-2 pl-4 hover:underline" onClick={toggleMenu}>
-                Wheel of Fortune
-              </Link>
-              <Link
-                href="/interactive"
-                className="block py-2 pl-4 hover:underline"
-                onClick={toggleMenu}
-              >
-                Interactive Programming
-              </Link>
-              <Link
-                href="/sorting"
-                className="block py-2 pl-4 hover:underline"
-                onClick={toggleMenu}
-              >
-                Sorting Algorithms
-              </Link>
-              <div className="py-2 text-sm font-semibold text-white/60">Presentation</div>
-              <Link
-                href="/questions/view"
-                className="block py-2 pl-4 hover:underline"
-                onClick={toggleMenu}
-              >
-                View Questions
-              </Link>
-              <Link
-                href="/questions/add"
-                className="block py-2 pl-4 hover:underline"
-                onClick={toggleMenu}
-              >
-                Add Questions
-              </Link>
-              <Link href="/admin" className="block py-2 hover:underline" onClick={toggleMenu}>
-                Admin
-              </Link>
-              <Link href="/logout" className="block py-2 hover:underline" onClick={toggleMenu}>
-                Logout
-              </Link>
-            </>
-          ) : (
-            <Link href="/login" className="block py-2 hover:underline" onClick={toggleMenu}>
-              Login
-            </Link>
-          )}
         </div>
-      )}
-    </nav>
+      </nav>
+
+      {/* Mobile Navigation with Sidebar */}
+      <div className="lg:hidden">
+        <SidebarProvider>
+          <Sidebar side="right" className="bg-leiden border-none shadow-none [&>div]:border-none">
+            <SidebarNavigation user={user} t={t} language={language} setLanguage={setLanguage} />
+          </Sidebar>
+
+          {/* Mobile Trigger Only */}
+          <main>
+            <div className="fixed right-4 top-4 z-50 lg:hidden">
+              <SidebarTrigger className="h-10 w-10 border-none bg-transparent p-0 hover:bg-transparent">
+                <Menu className="h-6 w-6 text-leiden" />
+              </SidebarTrigger>
+            </div>
+          </main>
+        </SidebarProvider>
+      </div>
+    </>
   );
 }
