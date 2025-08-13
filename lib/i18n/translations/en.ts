@@ -29,8 +29,9 @@ export const en = {
 
   // Home page
   home: {
-    title: 'Open Day of the Leiden Institute of Advanced Computer Science',
-    subtitle: 'Answer the questionnaire below for some awesome Merch!',
+    title:
+      'Are you interested in becoming a student developer and gain some real-world experience while earning money too?',
+    subtitle: 'Scan the QR code below to find out more',
   },
 
   // Login page

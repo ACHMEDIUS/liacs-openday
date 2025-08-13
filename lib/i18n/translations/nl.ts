@@ -29,8 +29,8 @@ export const nl = {
 
   // Home page
   home: {
-    title: 'Open Dag van het Leiden Institute of Advanced Computer Science',
-    subtitle: 'Vul de onderstaande vragenlijst in voor geweldige merchandise!',
+    title: 'Wil je ook een student developer worden en echte geld gaan verdienen?',
+    subtitle: 'Scan dan de QR code voor meer informatie',
   },
 
   // Login page
