@@ -13,6 +13,10 @@ module.exports = {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
+      fontFamily: {
+        bitcount: ['var(--font-bitcount)', 'monospace'],
+        domine: ['var(--font-domine)', 'serif'],
+      },
       colors: {
         leiden: '#001158',
         science: '#f46e32',
