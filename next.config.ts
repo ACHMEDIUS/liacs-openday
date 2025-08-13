@@ -12,11 +12,7 @@ const nextConfig: NextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  // Enable tree shaking
-  webpack: config => {
-    config.optimization.usedExports = true;
-    return config;
-  },
+  // Tree shaking is handled automatically by Next.js 15
 };
 
 export default withBundleAnalyzer(nextConfig);

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "start:static": "npx serve@latest out",
@@ -31,6 +31,7 @@
     "@radix-ui/react-switch": "^1.2.5",
     "@radix-ui/react-tabs": "^1.1.12",
     "@radix-ui/react-tooltip": "^1.2.7",
+    "@types/three": "^0.179.0",
     "canvas-confetti": "^1.9.3",
     "chroma-js": "^3.1.2",
     "class-variance-authority": "^0.7.1",
@@ -47,7 +48,8 @@
     "react-dom": "^19.0.0",
     "sonner": "^2.0.5",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "three": "^0.179.1"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^15.3.4",
