@@ -266,7 +266,7 @@ export default function AnimatedGridBackground() {
     function initDots() {
       const vw = window.innerWidth * 0.01;
       const vh = window.innerHeight * 0.01;
-      const qrBounds = getQRBounds();
+      // const qrBounds = getQRBounds();
 
       let dotIndex = 0;
 
@@ -404,8 +404,11 @@ export default function AnimatedGridBackground() {
     }
 
     function animate() {
+      // TODO: correct typing
       const currentTime = performance.now() * 0.001;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const deltaTime = Math.min(0.05, currentTime - (animate as any).lastTime || 0);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (animate as any).lastTime = currentTime;
 
       uniforms.u_time.value = currentTime;

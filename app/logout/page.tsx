@@ -35,7 +35,8 @@ export default function LogoutPage() {
     };
 
     performLogout();
-  }, []); // Empty dependency array to run only once
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); //TODO: fix properly 
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">

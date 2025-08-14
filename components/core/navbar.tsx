@@ -47,7 +47,8 @@ function SidebarNavigation({
   setLanguage,
 }: {
   user?: User | null;
-  t: Record<string, any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  t: Record<string, any>; // TODO: correct typing
   language: string;
   setLanguage: (lang: 'en' | 'nl') => void;
 }) {
