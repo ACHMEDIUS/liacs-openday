@@ -11,10 +11,10 @@ export default function HomePage() {
   const { t } = useI18n();
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden">
+    <div className="relative h-full w-full overflow-hidden lg:h-screen lg:w-screen">
       <SimpleGradientBackground />
 
-      <main className="relative z-10 flex h-screen w-screen items-center justify-center p-8">
+      <main className="relative z-10 flex h-full w-full items-center justify-center p-8 lg:h-screen lg:w-screen">
         <section className="max-w-3xl text-center">
           <h1 className="mb-2 max-w-[600px] font-domine text-4xl font-bold leading-[1.2] text-white drop-shadow-2xl">
             {t.home.title}
