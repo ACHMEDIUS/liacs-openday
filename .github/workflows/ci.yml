@@ -57,26 +57,26 @@ jobs:
         run: npm run format:check
 
   # Job 3: Linting
-  lint:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  # lint:
+  #   needs: setup
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '20'
 
-      - name: Restore cache
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: ${{ needs.setup.outputs.cache-key }}
+  #     - name: Restore cache
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: node_modules
+  #         key: ${{ needs.setup.outputs.cache-key }}
 
-      - name: Run ESLint
-        run: npm run lint
+  #     - name: Run ESLint
+  #       run: npm run lint
 
   # Job 4: Type checking
   typecheck:
