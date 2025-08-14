@@ -124,6 +124,7 @@ export default function AdminPage() {
   const [programmingQuestions] = useState<ProgrammingQuestion[]>(sampleProgrammingQuestions);
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   // Load settings from localStorage on mount
   useEffect(() => {
@@ -131,6 +132,7 @@ export default function AdminPage() {
     if (savedSettings) {
       setWheelSettings(JSON.parse(savedSettings));
     }
+    setIsLoading(false);
   }, []);
 
   const saveSettings = async () => {
@@ -139,7 +141,8 @@ export default function AdminPage() {
       localStorage.setItem('wheelSettings', JSON.stringify(wheelSettings));
       setSaveMessage('Settings saved successfully!');
       setTimeout(() => setSaveMessage(''), 3000);
-    } catch {
+    } catch (error) {
+      console.error('Failed to save settings:', error);
       setSaveMessage('Failed to save settings');
     } finally {
       setIsSaving(false);
@@ -181,7 +184,8 @@ export default function AdminPage() {
     setQnaQuestions(prev => prev.filter(q => q.id !== questionId));
   };
 
-  if (loading) {
+
+  if (loading || isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
