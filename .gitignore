@@ -44,3 +44,4 @@ next-env.d.ts
 pglite-debug.log
 CLAUDE.md
 .claude/
+firebase-debug.log
