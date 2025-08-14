@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import {
+  SidebarProvider,
   Sidebar,
   SidebarContent,
   SidebarGroup,
@@ -30,7 +31,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarProvider,
   SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar';
@@ -40,18 +40,8 @@ interface NavbarProps {
   loading?: boolean;
 }
 
-function SidebarNavigation({
-  user,
-  t,
-  language,
-  setLanguage,
-}: {
-  user?: User | null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  t: Record<string, any>; // TODO: correct typing
-  language: string;
-  setLanguage: (lang: 'en' | 'nl') => void;
-}) {
+function SidebarNavigation({ user }: { user?: User | null }) {
+  const { language, setLanguage, t } = useI18n();
   const { setOpenMobile } = useSidebar();
 
   const closeSidebar = () => {
@@ -59,15 +49,13 @@ function SidebarNavigation({
   };
 
   return (
-    <SidebarContent className="border-none bg-science text-white">
-      {/* Logo at top */}
+    <SidebarContent className="bg-science text-white">
       <div className="flex items-center justify-center border-b border-white/20 p-6">
         <Link href="/" onClick={closeSidebar}>
           <Logo />
         </Link>
       </div>
 
-      {/* Home Navigation */}
       <SidebarGroup>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -87,7 +75,6 @@ function SidebarNavigation({
         </SidebarMenu>
       </SidebarGroup>
 
-      {/* Apps Section - now available to everyone */}
       <SidebarGroup>
         <SidebarGroupLabel className="text-white/70">{t.nav.apps}</SidebarGroupLabel>
         <SidebarMenu>
@@ -115,7 +102,6 @@ function SidebarNavigation({
         </SidebarMenu>
       </SidebarGroup>
 
-      {/* Presentation Section - now available to everyone */}
       <SidebarGroup>
         <SidebarGroupLabel className="text-white/70">{t.nav.presentation}</SidebarGroupLabel>
         <SidebarMenu>
@@ -136,7 +122,6 @@ function SidebarNavigation({
         </SidebarMenu>
       </SidebarGroup>
 
-      {/* Admin Section - only for authenticated users */}
       {user && (
         <SidebarGroup>
           <SidebarMenu>
@@ -151,7 +136,6 @@ function SidebarNavigation({
         </SidebarGroup>
       )}
 
-      {/* Language Selector - available to everyone */}
       <SidebarGroup>
         <SidebarGroupLabel className="text-white/70">{t.nav.language}</SidebarGroupLabel>
         <div className="px-3">
@@ -168,7 +152,6 @@ function SidebarNavigation({
         </div>
       </SidebarGroup>
 
-      {/* Auth Buttons - conditional based on user state */}
       <SidebarGroup>
         <div className="px-3 pb-6">
           {user ? (
@@ -203,6 +186,7 @@ function SidebarNavigation({
     </SidebarContent>
   );
 }
+
 
 export default function Navbar({ user, loading }: NavbarProps) {
   const { language, setLanguage, t } = useI18n();
@@ -492,25 +476,20 @@ export default function Navbar({ user, loading }: NavbarProps) {
         </div>
       </nav>
 
-      {/* Mobile Navigation with Sidebar */}
+      {/* Mobile Navigation - Fixed positioning to avoid layout conflicts */}
       <div className="lg:hidden">
-        <SidebarProvider>
-          <Sidebar
-            side="right"
-            className="border-none bg-science shadow-none [&>div]:border-none [&>div]:bg-science"
-          >
-            <SidebarNavigation user={user} t={t} language={language} setLanguage={setLanguage} />
-          </Sidebar>
-
-          {/* Mobile Trigger Only */}
-          <main>
-            <div className="fixed right-4 top-4 z-50 lg:hidden">
-              <SidebarTrigger className="h-10 w-10 border-none bg-transparent p-0 hover:bg-transparent">
-                <Menu className="h-6 w-6 text-science" />
+        <div className="fixed inset-0 z-40">
+          <SidebarProvider>
+            <Sidebar side="right" className="bg-science">
+              <SidebarNavigation user={user} />
+            </Sidebar>
+            <div className="fixed right-4 top-4 z-50">
+              <SidebarTrigger className="h-10 w-10 bg-science text-white hover:bg-science/80">
+                <Menu className="h-6 w-6" />
               </SidebarTrigger>
             </div>
-          </main>
-        </SidebarProvider>
+          </SidebarProvider>
+        </div>
       </div>
     </>
   );
