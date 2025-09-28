@@ -19,6 +19,14 @@ export const nl = {
     interactiveDescription: 'Debug code uitdagingen en test je vaardigheden',
     sortingAlgorithms: 'Sorteeralgoritmen',
     sortingDescription: 'Visualiseer en verken sorteeralgoritmen',
+    mazes: 'Doolhof Verkenner',
+    mazesDescription: 'Vergelijk BFS-, DFS- en flood fill-verkenningen',
+    oracle: 'Oracle',
+    oracleDescription: 'AI-chatconsole met Hugging Face-modellen',
+    interestingPatterns: 'Interessante Patronen',
+    interestingPatternsDescription: 'Fractals en creatieve code-experimenten',
+    objectDetection: 'Objectdetectie',
+    objectDetectionDescription: 'YOLOv12-demo in de browser',
 
     // Presentation menu
     viewQuestions: 'Vragen Bekijken',

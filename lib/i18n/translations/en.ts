@@ -19,6 +19,14 @@ export const en = {
     interactiveDescription: 'Debug code challenges and test your skills',
     sortingAlgorithms: 'Sorting Algorithms',
     sortingDescription: 'Visualize and explore sorting algorithms',
+    mazes: 'Maze Explorer',
+    mazesDescription: 'Compare BFS, DFS, and flood fill traversals',
+    oracle: 'Oracle',
+    oracleDescription: 'AI chat console with Hugging Face models',
+    interestingPatterns: 'Interesting Patterns',
+    interestingPatternsDescription: 'Fractals and creative coding experiments',
+    objectDetection: 'Object Detection',
+    objectDetectionDescription: 'YOLOv12 demo running in the browser',
 
     // Presentation menu
     viewQuestions: 'View Questions',

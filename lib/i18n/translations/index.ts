@@ -26,6 +26,14 @@ type BaseTranslationStructure = {
     interactiveDescription: string;
     sortingAlgorithms: string;
     sortingDescription: string;
+    mazes: string;
+    mazesDescription: string;
+    oracle: string;
+    oracleDescription: string;
+    interestingPatterns: string;
+    interestingPatternsDescription: string;
+    objectDetection: string;
+    objectDetectionDescription: string;
     viewQuestions: string;
     viewQuestionsDescription: string;
     addQuestions: string;
