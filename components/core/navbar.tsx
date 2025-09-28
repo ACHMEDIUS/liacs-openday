@@ -76,6 +76,19 @@ function SidebarNavigation({ user }: { user?: User | null }) {
       </SidebarGroup>
 
       <SidebarGroup>
+        <div className="px-3 pb-3">
+          <Button
+            asChild
+            className="w-full bg-white text-leiden shadow-md hover:bg-white/90"
+          >
+            <Link href="/object-detection" onClick={closeSidebar}>
+              {t.nav.objectDetection}
+            </Link>
+          </Button>
+        </div>
+      </SidebarGroup>
+
+      <SidebarGroup>
         <SidebarGroupLabel className="text-white/70">{t.nav.apps}</SidebarGroupLabel>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -96,6 +109,27 @@ function SidebarNavigation({ user }: { user?: User | null }) {
             <SidebarMenuButton asChild className="text-white hover:bg-white/10">
               <Link href="/sorting" onClick={closeSidebar}>
                 {t.nav.sortingAlgorithms}
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild className="text-white hover:bg-white/10">
+              <Link href="/mazes" onClick={closeSidebar}>
+                {t.nav.mazes}
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild className="text-white hover:bg-white/10">
+              <Link href="/oracle" onClick={closeSidebar}>
+                {t.nav.oracle}
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild className="text-white hover:bg-white/10">
+              <Link href="/patterns" onClick={closeSidebar}>
+                {t.nav.interestingPatterns}
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -222,7 +256,7 @@ export default function Navbar({ user, loading }: NavbarProps) {
     const handleMouseMove = (e: MouseEvent) => {
       // Check if mouse is in top 10vh zone
       const viewportHeight = window.innerHeight;
-      const topZoneHeight = viewportHeight * 0.1; // 10vh
+      const topZoneHeight = viewportHeight * 0.2; // 20vh
       const inZone = e.clientY <= topZoneHeight;
 
       setIsInTopZone(inZone);
@@ -282,8 +316,8 @@ export default function Navbar({ user, loading }: NavbarProps) {
                     {t.nav.apps}
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <ul className="grid gap-2 p-4 md:w-[600px] lg:w-[700px] lg:grid-cols-[.75fr_1fr_1fr]">
-                      <li className="row-span-3">
+                    <ul className="grid gap-2 p-4 md:w-[620px] lg:w-[780px] lg:grid-cols-[.8fr_1fr_1fr]">
+                      <li className="row-span-4">
                         <NavigationMenuLink asChild>
                           <div className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md">
                             <Gamepad2 className="mb-2 h-8 w-8 text-science" />
@@ -342,12 +376,12 @@ export default function Navbar({ user, loading }: NavbarProps) {
                       <li>
                         <NavigationMenuLink asChild>
                           <Link
-                            href="/fluid-simulation"
+                            href="/mazes"
                             className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                           >
-                            <div className="text-sm font-medium leading-none">Fluid Simulation</div>
+                            <div className="text-sm font-medium leading-none">{t.nav.mazes}</div>
                             <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                              Interactive fluid dynamics visualization
+                              {t.nav.mazesDescription}
                             </p>
                           </Link>
                         </NavigationMenuLink>
@@ -355,12 +389,38 @@ export default function Navbar({ user, loading }: NavbarProps) {
                       <li>
                         <NavigationMenuLink asChild>
                           <Link
-                            href="/liacs-ai"
+                            href="/oracle"
                             className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                           >
-                            <div className="text-sm font-medium leading-none">LIACS AI</div>
+                            <div className="text-sm font-medium leading-none">{t.nav.oracle}</div>
                             <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                              Explore AI research and applications
+                              {t.nav.oracleDescription}
+                            </p>
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                      <li>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            href="/patterns"
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                          >
+                            <div className="text-sm font-medium leading-none">{t.nav.interestingPatterns}</div>
+                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                              {t.nav.interestingPatternsDescription}
+                            </p>
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                      <li>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            href="/fluid-simulation"
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                          >
+                            <div className="text-sm font-medium leading-none">Fluid Simulation</div>
+                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                              Interactive fluid dynamics visualization
                             </p>
                           </Link>
                         </NavigationMenuLink>
@@ -433,8 +493,18 @@ export default function Navbar({ user, loading }: NavbarProps) {
             </NavigationMenu>
           </div>
 
-          {/* Right: Language Selector + Auth Buttons */}
+          {/* Right: Quick CTA + Language + Auth */}
           <div className="ml-6 flex items-center space-x-3">
+            <Button
+              asChild
+              className="hidden bg-white text-leiden shadow-md transition hover:bg-white/90 lg:inline-flex"
+              size="sm"
+            >
+              <Link href="/object-detection" className="flex items-center space-x-2">
+                <span>{t.nav.objectDetection}</span>
+              </Link>
+            </Button>
+
             {/* Language Selector */}
             <Select value={language} onValueChange={setLanguage}>
               <SelectTrigger className="h-8 w-[110px] border-white/30 bg-white/10 text-white hover:bg-white/20">

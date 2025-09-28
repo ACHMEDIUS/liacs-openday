@@ -9,10 +9,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   return (
     <I18nProvider>
-      <div className="flex h-screen w-screen flex-col overflow-hidden">
+      <div className="flex min-h-screen w-full flex-col bg-background">
         <Navbar user={user} loading={loading} />
-        <main className="flex-1 overflow-auto p-4 lg:flex lg:items-center lg:justify-center lg:p-0">
-          {children}
+        <main className="flex-1">
+          <div className="w-full">{children}</div>
         </main>
         <Footer />
       </div>
