@@ -1,0 +1,37 @@
+# LIACS Open Day Portal
+
+> Interactive Next.js 15 portal for Leiden University's LIACS Open Day, featuring hands-on demos, question workflows, and Firebase-backed admin tooling.
+
+Important notes:
+- Built with the App Router (`app/`) and TypeScript-first components under `components/`; styling relies on Tailwind CSS utilities and shadcn/ui primitives.
+- Client data flows through Firebase (client SDK in `lib/firebase.ts`) with Cloud Functions in `functions/src`; translations live in `lib/i18n/`.
+- Vitest and Testing Library power unit coverage (`test/`), and npm scripts in `package.json` orchestrate build, lint, and analyze tasks.
+- Public assets ship from `public/` and `data/questions.ts`; ensure updates mirror kiosk/demo content before deployment.
+
+## Core Guides
+- [AGENTS.md](https://github.com/behrad/liacs-openday/blob/main/AGENTS.md): Contributor-focused workflow, scripts, and Firebase deployment cues.
+- [RULES.md](https://github.com/behrad/liacs-openday/blob/main/RULES.md): Legacy refactoring manifesto—read for architectural expectations, but cross-check with current structure.
+- [README.md](https://github.com/behrad/liacs-openday/blob/main/README.md): Base Next.js bootstrap notes; augment with `AGENTS.md` for project specifics.
+
+## Application Modules
+- [app/](https://github.com/behrad/liacs-openday/tree/main/app): App Router routes including interactive demos (`fluid-simulation`, `wheel`) and admin portal.
+- [components/](https://github.com/behrad/liacs-openday/tree/main/components): Shared UI primitives split into `app`, `common`, `core`, and `ui` namespaces.
+- [lib/](https://github.com/behrad/liacs-openday/tree/main/lib): Firebase setup, i18n context, and utility helpers used across routes and components.
+- [data/questions.ts](https://github.com/behrad/liacs-openday/blob/main/data/questions.ts): Seed questions rendered in public kiosk and admin flows.
+
+## Configuration & Deployment
+- [firebase.json](https://github.com/behrad/liacs-openday/blob/main/firebase.json): Hosting, functions, and storage configuration for Firebase deploys.
+- [apphosting.yaml](https://github.com/behrad/liacs-openday/blob/main/apphosting.yaml): Firebase App Hosting backend definition for Cloud Run deployment.
+- [functions/src/index.ts](https://github.com/behrad/liacs-openday/blob/main/functions/src/index.ts): Cloud Functions entry; run `npm install` within `functions/` prior to deployment.
+- [next.config.ts](https://github.com/behrad/liacs-openday/blob/main/next.config.ts): Next.js configuration, including bundler analysis flag.
+
+## Testing & Tooling
+- [test/](https://github.com/behrad/liacs-openday/tree/main/test): Vitest suites mirroring source hierarchy; add new specs here.
+- [vitest.config.ts](https://github.com/behrad/liacs-openday/blob/main/vitest.config.ts): Test runner settings (jsdom env, coverage reporters, path alias).
+- [package.json](https://github.com/behrad/liacs-openday/blob/main/package.json): Canonical npm scripts for dev, build, lint, format, tests, and bundle analysis.
+- [tsconfig.json](https://github.com/behrad/liacs-openday/blob/main/tsconfig.json): TypeScript compiler options matching Next.js 15 defaults with path aliases.
+
+## Assets & Styling
+- [public/](https://github.com/behrad/liacs-openday/tree/main/public): Static assets, manifest, QR code, and typography files consumed at runtime.
+- [app/globals.css](https://github.com/behrad/liacs-openday/blob/main/app/globals.css): Tailwind base layers and global styling overrides.
+- [tailwind.config.js](https://github.com/behrad/liacs-openday/blob/main/tailwind.config.js): Tailwind theme extensions powering kiosk branding.
