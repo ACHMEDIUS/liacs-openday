@@ -42,6 +42,6 @@ next-env.d.ts
 
 # miscellaneous
 pglite-debug.log
-CLAUDE.md
+*.local.md
 .claude/
 firebase-debug.log
