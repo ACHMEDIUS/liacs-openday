@@ -88,7 +88,7 @@ export function TruchetSection() {
         orientations[row][col] = (orientations[row][col] + 1) % 4;
       }
       redraw();
-      setFrame((prev) => prev + 1);
+      setFrame(prev => prev + 1);
       animationRef.current = window.requestAnimationFrame(animate);
     };
 
@@ -116,7 +116,8 @@ export function TruchetSection() {
         <div>
           <h2 className="text-3xl font-semibold">Truchet Tiles</h2>
           <p className="max-w-2xl text-slate-200/80">
-            Each tile is a quarter-circle motif rotated randomly. The mosaic shifts over time, producing emergent labyrinths.
+            Each tile is a quarter-circle motif rotated randomly. The mosaic shifts over time,
+            producing emergent labyrinths.
           </p>
         </div>
         <div className="rounded-full border border-white/20 px-4 py-1 text-sm text-white/80">
@@ -125,7 +126,10 @@ export function TruchetSection() {
       </div>
 
       <div className="flex flex-1 items-center justify-center">
-        <canvas ref={canvasRef} className="rounded-3xl border border-white/10 shadow-[0_20px_80px_rgba(15,23,42,0.4)]" />
+        <canvas
+          ref={canvasRef}
+          className="rounded-3xl border border-white/10 shadow-[0_20px_80px_rgba(15,23,42,0.4)]"
+        />
       </div>
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-4 text-sm">
@@ -142,7 +146,13 @@ export function TruchetSection() {
           <label className="text-xs uppercase tracking-wide text-white/70">
             Mutation speed • <span className="font-semibold text-white">{speed.toFixed(1)}x</span>
           </label>
-          <Slider value={[speed]} onValueChange={(value) => setSpeed(value[0])} min={0.5} max={4} step={0.1} />
+          <Slider
+            value={[speed]}
+            onValueChange={value => setSpeed(value[0])}
+            min={0.5}
+            max={4}
+            step={0.1}
+          />
         </div>
       </div>
     </section>

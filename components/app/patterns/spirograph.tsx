@@ -33,8 +33,10 @@ export function SpirographSection() {
 
     for (let i = 0; i < steps; i++) {
       tRef.current += 0.01;
-      const x = CENTER + (R - r) * Math.cos(tRef.current) + d * Math.cos(((R - r) / r) * tRef.current);
-      const y = CENTER + (R - r) * Math.sin(tRef.current) - d * Math.sin(((R - r) / r) * tRef.current);
+      const x =
+        CENTER + (R - r) * Math.cos(tRef.current) + d * Math.cos(((R - r) / r) * tRef.current);
+      const y =
+        CENTER + (R - r) * Math.sin(tRef.current) - d * Math.sin(((R - r) / r) * tRef.current);
 
       if (prevPoint.current) {
         ctx.beginPath();
@@ -108,7 +110,8 @@ export function SpirographSection() {
         <div>
           <h2 className="text-3xl font-semibold">Spirograph</h2>
           <p className="max-w-2xl text-slate-200/80">
-            A hypotrochoid curve traced by a point attached to a rolling circle. Adjust the drawing speed to reveal intricate harmonics.
+            A hypotrochoid curve traced by a point attached to a rolling circle. Adjust the drawing
+            speed to reveal intricate harmonics.
           </p>
         </div>
         <div className="rounded-full border border-white/20 px-4 py-1 text-sm text-white/70">
@@ -117,18 +120,34 @@ export function SpirographSection() {
       </div>
 
       <div className="flex flex-1 items-center justify-center">
-        <canvas ref={canvasRef} className="rounded-[2rem] border border-orange-400/30 shadow-[0_25px_120px_rgba(249,115,22,0.45)]" />
+        <canvas
+          ref={canvasRef}
+          className="rounded-[2rem] border border-orange-400/30 shadow-[0_25px_120px_rgba(249,115,22,0.45)]"
+        />
       </div>
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <Button onClick={handleStart} disabled={running} className="bg-orange-500 text-white hover:bg-orange-500/90">
+          <Button
+            onClick={handleStart}
+            disabled={running}
+            className="bg-orange-500 text-white hover:bg-orange-500/90"
+          >
             <Play className="mr-2 h-4 w-4" /> Start
           </Button>
-          <Button onClick={() => setRunning(false)} disabled={!running} variant="outline" className="border-white/30 text-white hover:bg-white/10">
+          <Button
+            onClick={() => setRunning(false)}
+            disabled={!running}
+            variant="outline"
+            className="border-white/30 text-white hover:bg-white/10"
+          >
             <Pause className="mr-2 h-4 w-4" /> Pause
           </Button>
-          <Button onClick={reset} variant="outline" className="border-white/30 text-white hover:bg-white/10">
+          <Button
+            onClick={reset}
+            variant="outline"
+            className="border-white/30 text-white hover:bg-white/10"
+          >
             <RotateCcw className="mr-2 h-4 w-4" /> Reset
           </Button>
         </div>
@@ -136,7 +155,13 @@ export function SpirographSection() {
           <label className="text-xs uppercase tracking-wide text-white/70">
             Trace speed • <span className="font-semibold text-white">{speed.toFixed(1)}x</span>
           </label>
-          <Slider value={[speed]} onValueChange={(value) => setSpeed(value[0])} min={0.5} max={3} step={0.1} />
+          <Slider
+            value={[speed]}
+            onValueChange={value => setSpeed(value[0])}
+            min={0.5}
+            max={3}
+            step={0.1}
+          />
         </div>
       </div>
     </section>

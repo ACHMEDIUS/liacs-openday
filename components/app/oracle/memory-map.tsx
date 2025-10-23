@@ -78,7 +78,10 @@ export function MemoryMap({ nodes }: MemoryMapProps) {
             transform: `translate(-50%, -50%) scale(${0.8 + node.strength * 0.4})`,
           }}
         >
-          <span className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: ROLE_COLORS[node.role] }}>
+          <span
+            className="text-[10px] font-semibold uppercase tracking-wide"
+            style={{ color: ROLE_COLORS[node.role] }}
+          >
             {node.label}
           </span>
           <span className="text-[11px] leading-tight text-slate-600">{node.summary}</span>

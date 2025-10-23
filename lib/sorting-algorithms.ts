@@ -33,7 +33,12 @@ export interface SortAlgorithm {
 const clone = (arr: number[]): number[] => [...arr];
 
 const finalizeSteps = (array: number[], steps: SortStep[]): SortStep[] => {
-  steps.push({ array: clone(array), comparing: [], swapping: [], sorted: array.map((_, idx) => idx) });
+  steps.push({
+    array: clone(array),
+    comparing: [],
+    swapping: [],
+    sorted: array.map((_, idx) => idx),
+  });
   return steps;
 };
 
@@ -210,7 +215,12 @@ const radixSortSteps = (input: number[]): SortStep[] => {
       const index = Math.floor(array[i] / exp) % 10;
       output[count[index] - 1] = array[i];
       count[index]--;
-      steps.push({ array: clone(array), comparing: [], swapping: [Math.max(count[index], 0)], sorted: [] });
+      steps.push({
+        array: clone(array),
+        comparing: [],
+        swapping: [Math.max(count[index], 0)],
+        sorted: [],
+      });
     }
 
     for (let i = 0; i < array.length; i++) {
@@ -230,7 +240,8 @@ const bogoSortSteps = (input: number[]): SortStep[] => {
   const array = clone(input);
   const steps: SortStep[] = [];
 
-  const isSorted = (arr: number[]) => arr.every((value, index) => index === 0 || arr[index - 1] <= value);
+  const isSorted = (arr: number[]) =>
+    arr.every((value, index) => index === 0 || arr[index - 1] <= value);
   const shuffle = (arr: number[]) => {
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -391,7 +402,7 @@ export const sortingAlgorithms: SortAlgorithm[] = [
 ];
 
 export const getAlgorithmById = (id: AlgorithmId): SortAlgorithm => {
-  const algorithm = sortingAlgorithms.find((algo) => algo.id === id);
+  const algorithm = sortingAlgorithms.find(algo => algo.id === id);
   if (!algorithm) {
     throw new Error(`Unknown algorithm: ${id}`);
   }

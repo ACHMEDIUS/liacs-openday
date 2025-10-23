@@ -131,7 +131,8 @@ export function UlamSpiralSection() {
         <div>
           <h2 className="text-3xl font-semibold">Ulam Spiral</h2>
           <p className="max-w-2xl text-slate-200/80">
-            Natural numbers arranged in a spiral highlight prime constellations clustering along diagonal lines.
+            Natural numbers arranged in a spiral highlight prime constellations clustering along
+            diagonal lines.
           </p>
         </div>
         <div className="rounded-full border border-white/20 px-4 py-1 text-sm text-white/80">
@@ -140,14 +141,23 @@ export function UlamSpiralSection() {
       </div>
 
       <div className="flex flex-1 items-center justify-center">
-        <canvas ref={canvasRef} className="rounded-3xl border border-cyan-400/30 shadow-[0_25px_120px_rgba(56,189,248,0.45)]" />
+        <canvas
+          ref={canvasRef}
+          className="rounded-3xl border border-cyan-400/30 shadow-[0_25px_120px_rgba(56,189,248,0.45)]"
+        />
       </div>
 
-      <div className="mt-6 w-full max-w-sm self-end space-y-2 text-left text-sm">
+      <div className="mt-6 w-full max-w-sm space-y-2 self-end text-left text-sm">
         <label className="text-xs uppercase tracking-wide text-white/70">
           Numbers per frame • <span className="font-semibold text-white">{speed}</span>
         </label>
-        <Slider value={[speed]} onValueChange={(value) => setSpeed(value[0])} min={10} max={120} step={5} />
+        <Slider
+          value={[speed]}
+          onValueChange={value => setSpeed(value[0])}
+          min={10}
+          max={120}
+          step={5}
+        />
       </div>
     </section>
   );

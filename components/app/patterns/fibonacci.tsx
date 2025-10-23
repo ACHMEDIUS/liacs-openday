@@ -65,7 +65,7 @@ const buildSquares = () => {
   let minY = Infinity;
   let maxX = -Infinity;
   let maxY = -Infinity;
-  squares.forEach((sq) => {
+  squares.forEach(sq => {
     minX = Math.min(minX, sq.x);
     minY = Math.min(minY, sq.y);
     maxX = Math.max(maxX, sq.x + sq.size);
@@ -78,7 +78,7 @@ const buildSquares = () => {
   const offsetX = (SIZE - spanX * scale) / 2 - minX * scale;
   const offsetY = (SIZE - spanY * scale) / 2 - minY * scale;
 
-  return squares.map((sq) => ({
+  return squares.map(sq => ({
     index: sq.index,
     size: sq.size * scale,
     x: offsetX + sq.x * scale,
@@ -177,7 +177,8 @@ export function FibonacciSection() {
         <div>
           <h2 className="text-3xl font-semibold text-rose-600">Fibonacci Spiral</h2>
           <p className="max-w-2xl text-muted-foreground">
-            Squares sized by consecutive Fibonacci numbers tile the plane. Connecting quarter arcs reveals the golden spiral.
+            Squares sized by consecutive Fibonacci numbers tile the plane. Connecting quarter arcs
+            reveals the golden spiral.
           </p>
         </div>
         <div className="rounded-full border border-rose-200 px-4 py-1 text-sm text-rose-500">
@@ -186,14 +187,23 @@ export function FibonacciSection() {
       </div>
 
       <div className="flex flex-1 items-center justify-center">
-        <canvas ref={canvasRef} className="rounded-[2rem] border border-rose-200 shadow-[0_25px_80px_rgba(244,114,182,0.25)]" />
+        <canvas
+          ref={canvasRef}
+          className="rounded-[2rem] border border-rose-200 shadow-[0_25px_80px_rgba(244,114,182,0.25)]"
+        />
       </div>
 
-      <div className="mt-6 w-full max-w-sm self-end space-y-2 text-left text-sm">
+      <div className="mt-6 w-full max-w-sm space-y-2 self-end text-left text-sm">
         <label className="text-xs uppercase tracking-wide text-rose-500">
           Reveal pace • <span className="font-semibold text-rose-600">{speed.toFixed(1)}x</span>
         </label>
-        <Slider value={[speed]} onValueChange={(value) => setSpeed(value[0])} min={0.4} max={3} step={0.1} />
+        <Slider
+          value={[speed]}
+          onValueChange={value => setSpeed(value[0])}
+          min={0.4}
+          max={3}
+          step={0.1}
+        />
       </div>
     </section>
   );

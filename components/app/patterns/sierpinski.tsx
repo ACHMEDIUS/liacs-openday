@@ -43,7 +43,7 @@ export function SierpinskiSection() {
       ctx.fillRect(pointRef.current.x + 20, pointRef.current.y + 30, 1.2, 1.2);
     }
 
-    setPointCount((prev) => prev + pointsPerFrame);
+    setPointCount(prev => prev + pointsPerFrame);
     animationRef.current = window.requestAnimationFrame(drawFrame);
   }, [pointsPerFrame, vertices]);
 
@@ -122,7 +122,8 @@ export function SierpinskiSection() {
         <div>
           <h2 className="text-3xl font-semibold text-leiden">Sierpiński Triangle</h2>
           <p className="max-w-2xl text-muted-foreground">
-            Points fall halfway toward a randomly chosen vertex of an equilateral triangle. Over time the chaos game reveals the famous fractal.
+            Points fall halfway toward a randomly chosen vertex of an equilateral triangle. Over
+            time the chaos game reveals the famous fractal.
           </p>
         </div>
         <div className="rounded-full border border-leiden/20 px-4 py-1 text-sm text-leiden">
@@ -136,7 +137,11 @@ export function SierpinskiSection() {
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <Button onClick={handleResume} disabled={running} className="bg-leiden text-white hover:bg-leiden/90">
+          <Button
+            onClick={handleResume}
+            disabled={running}
+            className="bg-leiden text-white hover:bg-leiden/90"
+          >
             <Play className="mr-2 h-4 w-4" /> Start
           </Button>
           <Button onClick={() => setRunning(false)} disabled={!running} variant="outline">
@@ -151,7 +156,13 @@ export function SierpinskiSection() {
           <label className="text-sm font-medium text-muted-foreground">
             Points per frame: <span className="font-semibold text-leiden">{pointsPerFrame}</span>
           </label>
-          <Slider value={[pointsPerFrame]} onValueChange={(value) => setPointsPerFrame(value[0])} min={60} max={360} step={20} />
+          <Slider
+            value={[pointsPerFrame]}
+            onValueChange={value => setPointsPerFrame(value[0])}
+            min={60}
+            max={360}
+            step={20}
+          />
         </div>
       </div>
     </section>

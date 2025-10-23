@@ -60,7 +60,7 @@ export const computeBfsSteps = (maze: MazeGrid, start: Position, goal: Position)
     const { pos, path } = queue.shift()!;
     steps.push({
       visited: cloneVisited(visited),
-      frontier: queue.map((item) => item.pos),
+      frontier: queue.map(item => item.pos),
       current: pos,
       path,
     });
@@ -77,7 +77,7 @@ export const computeBfsSteps = (maze: MazeGrid, start: Position, goal: Position)
         queue.push({ pos: neighbour, path: [...path, neighbour] });
         steps.push({
           visited: cloneVisited(visited),
-          frontier: queue.map((item) => item.pos),
+          frontier: queue.map(item => item.pos),
           current: neighbour,
           path: [...path, neighbour],
         });
@@ -98,7 +98,12 @@ export const computeDfsSteps = (maze: MazeGrid, start: Position, goal: Position)
 
   stack.push({ pos: start, path: [start] });
   visited.add(toKey(start));
-  steps.push({ visited: cloneVisited(visited), frontier: stack.map((s) => s.pos), current: start, path: [start] });
+  steps.push({
+    visited: cloneVisited(visited),
+    frontier: stack.map(s => s.pos),
+    current: start,
+    path: [start],
+  });
 
   while (stack.length) {
     const node = stack[stack.length - 1];
@@ -106,7 +111,7 @@ export const computeDfsSteps = (maze: MazeGrid, start: Position, goal: Position)
 
     steps.push({
       visited: cloneVisited(visited),
-      frontier: stack.map((s) => s.pos),
+      frontier: stack.map(s => s.pos),
       current: pos,
       path,
     });
@@ -126,7 +131,7 @@ export const computeDfsSteps = (maze: MazeGrid, start: Position, goal: Position)
         stack.push({ pos: neighbour, path: [...path, neighbour] });
         steps.push({
           visited: cloneVisited(visited),
-          frontier: stack.map((s) => s.pos),
+          frontier: stack.map(s => s.pos),
           current: neighbour,
           path: [...path, neighbour],
         });
@@ -137,7 +142,12 @@ export const computeDfsSteps = (maze: MazeGrid, start: Position, goal: Position)
 
     if (!advanced) {
       stack.pop();
-      steps.push({ visited: cloneVisited(visited), frontier: stack.map((s) => s.pos), current: pos, path });
+      steps.push({
+        visited: cloneVisited(visited),
+        frontier: stack.map(s => s.pos),
+        current: pos,
+        path,
+      });
     }
   }
 
@@ -156,14 +166,24 @@ export const computeFloodFillSteps = (maze: MazeGrid, start: Position): MazeStep
 
   while (queue.length) {
     const pos = queue.shift()!;
-    steps.push({ visited: cloneVisited(visited), frontier: queue.slice(), current: pos, path: cloneVisited(visited) });
+    steps.push({
+      visited: cloneVisited(visited),
+      frontier: queue.slice(),
+      current: pos,
+      path: cloneVisited(visited),
+    });
 
     for (const neighbour of getNeighbours(maze, pos)) {
       const key = toKey(neighbour);
       if (!visited.has(key)) {
         visited.add(key);
         queue.push(neighbour);
-        steps.push({ visited: cloneVisited(visited), frontier: queue.slice(), current: neighbour, path: cloneVisited(visited) });
+        steps.push({
+          visited: cloneVisited(visited),
+          frontier: queue.slice(),
+          current: neighbour,
+          path: cloneVisited(visited),
+        });
       }
     }
   }

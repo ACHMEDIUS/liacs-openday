@@ -39,7 +39,7 @@ const COLORS = {
 
 const getBarHeightPercentages = (array: number[]) => {
   const max = Math.max(...array, 1);
-  return array.map((value) => (value / max) * 100);
+  return array.map(value => (value / max) * 100);
 };
 
 export function SortVisualizer({
@@ -96,7 +96,7 @@ export function SortVisualizer({
       }
 
       applyStep(step);
-      setStepIndex((prev) => prev + 1);
+      setStepIndex(prev => prev + 1);
     }, speed);
 
     return () => clearTimeout(timer);
@@ -121,7 +121,7 @@ export function SortVisualizer({
 
   const handlePauseResume = () => {
     if (!isRunning) return;
-    setIsPaused((prev) => !prev);
+    setIsPaused(prev => !prev);
   };
 
   const handleStop = () => {
@@ -198,14 +198,14 @@ export function SortVisualizer({
               <label className="text-sm font-medium">Algorithm</label>
               <Select
                 value={algorithmId}
-                onValueChange={(value) => {
+                onValueChange={value => {
                   const newValue = value as AlgorithmId;
                   setAlgorithmId(newValue);
                   setIsRunning(false);
                   setIsPaused(false);
                   setSteps([]);
                   setStepIndex(0);
-    setArray([...baseArray]);
+                  setArray([...baseArray]);
                 }}
                 disabled={isRunning || disabled}
               >
@@ -213,7 +213,7 @@ export function SortVisualizer({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {availableAlgorithms.map((algo) => (
+                  {availableAlgorithms.map(algo => (
                     <SelectItem key={algo.id} value={algo.id}>
                       {algo.name}
                     </SelectItem>
