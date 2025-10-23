@@ -25,6 +25,10 @@ export const nl = {
     oracleDescription: 'AI-chatconsole met Hugging Face-modellen',
     interestingPatterns: 'Interessante Patronen',
     interestingPatternsDescription: 'Fractals en creatieve code-experimenten',
+    fluidSimulation: 'Vloeistofsimulatie',
+    fluidSimulationDescription: 'Interactieve visualisatie van vloeistofdynamica',
+    grappleGame: 'Grapple Game',
+    grappleGameDescription: 'Fysica-gebaseerd grijpspel met procedurele generatie',
     objectDetection: 'Objectdetectie',
     objectDetectionDescription: 'YOLOv12-demo in de browser',
 
@@ -39,6 +43,8 @@ export const nl = {
   home: {
     title: 'Wil je ook een student developer worden en echte geld gaan verdienen?',
     subtitle: 'Scan dan de QR code voor meer informatie',
+    badge: 'Universiteit Leiden • Student Dev',
+    ctaPrimary: 'Word Student Dev',
   },
 
   // Login page

@@ -1,11 +1,15 @@
 'use client';
-import Navbar from '@/components/core/navbar';
+
+import Navbar from '@/components/core/navbar/NavBar';
 import Footer from '@/components/core/footer';
-import { useAuth } from '../hooks/use-auth';
 import { I18nProvider } from '@/lib/i18n';
+import { useAuth } from '../hooks/use-auth';
+import { usePathname } from 'next/navigation';
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
+  const pathname = usePathname();
+  const showLayoutFooter = pathname !== '/';
 
   return (
     <I18nProvider>
@@ -14,7 +18,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         <main className="flex-1">
           <div className="w-full">{children}</div>
         </main>
-        <Footer />
+        {showLayoutFooter && <Footer />}
       </div>
     </I18nProvider>
   );

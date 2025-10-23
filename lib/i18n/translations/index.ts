@@ -32,6 +32,10 @@ type BaseTranslationStructure = {
     oracleDescription: string;
     interestingPatterns: string;
     interestingPatternsDescription: string;
+    fluidSimulation: string;
+    fluidSimulationDescription: string;
+    grappleGame: string;
+    grappleGameDescription: string;
     objectDetection: string;
     objectDetectionDescription: string;
     viewQuestions: string;
@@ -42,6 +46,8 @@ type BaseTranslationStructure = {
   home: {
     title: string;
     subtitle: string;
+    badge: string;
+    ctaPrimary: string;
   };
   login: {
     title: string;

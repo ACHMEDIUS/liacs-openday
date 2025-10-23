@@ -25,6 +25,10 @@ export const en = {
     oracleDescription: 'AI chat console with Hugging Face models',
     interestingPatterns: 'Interesting Patterns',
     interestingPatternsDescription: 'Fractals and creative coding experiments',
+    fluidSimulation: 'Fluid Simulation',
+    fluidSimulationDescription: 'Interactive fluid dynamics visualization',
+    grappleGame: 'Grapple Game',
+    grappleGameDescription: 'Physics-based grappling with procedural generation',
     objectDetection: 'Object Detection',
     objectDetectionDescription: 'YOLOv12 demo running in the browser',
 
@@ -38,8 +42,10 @@ export const en = {
   // Home page
   home: {
     title:
-      'Are you interested in becoming a student developer and gain some real-world experience while earning money too?',
+      'Are you interested in becoming a student developer and gaining some real-world experience while earning money too?',
     subtitle: 'Scan the QR code below to find out more',
+    badge: 'Leiden University • Student Dev',
+    ctaPrimary: 'Become a Student Dev',
   },
 
   // Login page
