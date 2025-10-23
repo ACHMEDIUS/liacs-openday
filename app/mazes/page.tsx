@@ -4,7 +4,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Cat, Play, Pause, RotateCcw } from 'lucide-react';
@@ -16,6 +22,8 @@ import {
   MazeStep,
   Position,
 } from '@/lib/maze-algorithms';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { MobileUnsupportedNotice } from '@/components/common/MobileNotice';
 
 const MAZE: MazeGrid = [
   [0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
@@ -58,9 +66,9 @@ const MazeBoard = ({
   step: MazeStep;
   label: string;
 }) => {
-  const visitedKeys = new Set(step.visited.map((pos) => `${pos.row}-${pos.col}`));
-  const pathKeys = new Set((step.path ?? []).map((pos) => `${pos.row}-${pos.col}`));
-  const frontierKeys = new Set((step.frontier ?? []).map((pos) => `${pos.row}-${pos.col}`));
+  const visitedKeys = new Set(step.visited.map(pos => `${pos.row}-${pos.col}`));
+  const pathKeys = new Set((step.path ?? []).map(pos => `${pos.row}-${pos.col}`));
+  const frontierKeys = new Set((step.frontier ?? []).map(pos => `${pos.row}-${pos.col}`));
   const currentKey = step.current ? `${step.current.row}-${step.current.col}` : undefined;
 
   const pathLength = step.path?.length ?? 0;
@@ -118,11 +126,16 @@ const MazeBoard = ({
                 const isVisited = visitedKeys.has(key);
                 const inFrontier = frontierKeys.has(key);
 
-                let className = 'flex items-center justify-center border border-white/15 bg-white transition-colors';
-                if (isWall) className = 'flex items-center justify-center border border-slate-800 bg-slate-900';
+                let className =
+                  'flex items-center justify-center border border-white/15 bg-white transition-colors';
+                if (isWall)
+                  className =
+                    'flex items-center justify-center border border-slate-800 bg-slate-900';
                 else if (inPath) className = 'flex items-center justify-center border text-white';
-                else if (inFrontier) className = 'flex items-center justify-center border bg-amber-100 text-slate-900';
-                else if (isVisited) className = 'flex items-center justify-center border bg-slate-100';
+                else if (inFrontier)
+                  className = 'flex items-center justify-center border bg-amber-100 text-slate-900';
+                else if (isVisited)
+                  className = 'flex items-center justify-center border bg-slate-100';
 
                 const style = inPath
                   ? { backgroundColor: algorithm.color, color: '#fff' }
@@ -136,7 +149,13 @@ const MazeBoard = ({
 
                 return (
                   <div key={key} className={className} style={style}>
-                    {isCurrent ? <Cat className="h-5 w-5" strokeWidth={1.8} style={{ color: algorithm.color }} /> : null}
+                    {isCurrent ? (
+                      <Cat
+                        className="h-5 w-5"
+                        strokeWidth={1.8}
+                        style={{ color: algorithm.color }}
+                      />
+                    ) : null}
                     {isStart && !isCurrent ? (
                       <span className="text-xs font-medium text-emerald-600">START</span>
                     ) : null}
@@ -166,6 +185,12 @@ export default function MazesPage() {
   const [running, setRunning] = useState(false);
   const [paused, setPaused] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
+  const isMobile = useIsMobile();
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    setReady(true);
+  }, []);
 
   const algorithms = useMemo<Record<AlgorithmConfig['id'], AlgorithmConfig>>(
     () => ({
@@ -196,9 +221,12 @@ export default function MazesPage() {
 
   const primary = algorithms[primaryId];
   const secondary = algorithms[secondaryId];
-  const activeAlgorithms = useMemo(() => (compareMode ? [primary, secondary] : [primary]), [compareMode, primary, secondary]);
+  const activeAlgorithms = useMemo(
+    () => (compareMode ? [primary, secondary] : [primary]),
+    [compareMode, primary, secondary]
+  );
   const maxSteps = useMemo(() => {
-    const lengths = activeAlgorithms.map((algo) => algo.steps.length);
+    const lengths = activeAlgorithms.map(algo => algo.steps.length);
     return Math.max(...lengths);
   }, [activeAlgorithms]);
 
@@ -217,7 +245,7 @@ export default function MazesPage() {
 
     const tick = (now: number) => {
       if (now - last >= speed) {
-        setStepIndex((prev) => {
+        setStepIndex(prev => {
           if (prev + 1 >= maxSteps) {
             setRunning(false);
             setPaused(false);
@@ -242,7 +270,7 @@ export default function MazesPage() {
 
   const handlePause = () => {
     if (!running) return;
-    setPaused((prev) => !prev);
+    setPaused(prev => !prev);
   };
 
   const handleReset = () => {
@@ -253,12 +281,28 @@ export default function MazesPage() {
 
   const disableSecondarySelect = !compareMode;
 
+  if (!ready) {
+    return null;
+  }
+
+  if (isMobile) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <MobileUnsupportedNotice
+          title="Maze Explorer"
+          description="Maze Explorer is only available on larger screens. Please visit from a tablet or desktop device to compare the algorithms."
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto max-w-7xl space-y-10 px-4 py-12">
       <header className="flex flex-col gap-3">
         <h1 className="text-4xl font-semibold text-leiden">Maze Explorer</h1>
         <p className="max-w-3xl text-muted-foreground">
-          Watch our curious cat traverse the same maze with different strategies. Compare algorithms side by side or focus on a single explorer.
+          Watch our curious cat traverse the same maze with different strategies. Compare algorithms
+          side by side or focus on a single explorer.
         </p>
       </header>
 
@@ -270,7 +314,10 @@ export default function MazesPage() {
           <div className="flex flex-1 flex-col gap-4 lg:flex-row lg:items-center">
             <div className="w-full max-w-xs space-y-2">
               <label className="text-sm font-medium text-muted-foreground">Primary algorithm</label>
-              <Select value={primaryId} onValueChange={(value) => setPrimaryId(value as AlgorithmConfig['id'])}>
+              <Select
+                value={primaryId}
+                onValueChange={value => setPrimaryId(value as AlgorithmConfig['id'])}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -283,10 +330,12 @@ export default function MazesPage() {
             </div>
 
             <div className="w-full max-w-xs space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">Secondary (compare)</label>
+              <label className="text-sm font-medium text-muted-foreground">
+                Secondary (compare)
+              </label>
               <Select
                 value={secondaryId}
-                onValueChange={(value) => setSecondaryId(value as AlgorithmConfig['id'])}
+                onValueChange={value => setSecondaryId(value as AlgorithmConfig['id'])}
                 disabled={disableSecondarySelect}
               >
                 <SelectTrigger>
@@ -306,7 +355,9 @@ export default function MazesPage() {
               <Switch checked={compareMode} onCheckedChange={setCompareMode} />
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Compare two algorithms</p>
-                <p className="text-xs text-muted-foreground">Toggle off for a single full-width view.</p>
+                <p className="text-xs text-muted-foreground">
+                  Toggle off for a single full-width view.
+                </p>
               </div>
             </div>
 
@@ -314,14 +365,24 @@ export default function MazesPage() {
               <label className="text-sm font-medium text-muted-foreground">
                 Step interval: <span className="font-semibold text-leiden">{speed} ms</span>
               </label>
-              <Slider value={[speed]} onValueChange={(value) => setSpeed(value[0])} min={80} max={800} step={20} />
+              <Slider
+                value={[speed]}
+                onValueChange={value => setSpeed(value[0])}
+                min={80}
+                max={800}
+                step={20}
+              />
             </div>
           </div>
         </CardContent>
       </Card>
 
       <div className="flex flex-wrap items-center gap-3">
-        <Button onClick={handleStart} disabled={running && !paused} className="bg-leiden text-white hover:bg-leiden/90">
+        <Button
+          onClick={handleStart}
+          disabled={running && !paused}
+          className="bg-leiden text-white hover:bg-leiden/90"
+        >
           <Play className="mr-2 h-4 w-4" /> Start
         </Button>
         <Button onClick={handlePause} disabled={!running} variant="outline">

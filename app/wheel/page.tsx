@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RotateCcw, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { MobileUnsupportedNotice } from '@/components/common/MobileNotice';
 
 interface WheelSettings {
   items: string[];
@@ -40,6 +42,12 @@ export default function WheelPage() {
   const [result, setResult] = useState<string | null>(null);
   const [wheelSettings, setWheelSettings] = useState<WheelSettings>(defaultWheelSettings);
   const [canSpin, setCanSpin] = useState(true);
+  const isMobile = useIsMobile();
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    setReady(true);
+  }, []);
 
   // Load settings from localStorage
   useEffect(() => {
@@ -196,6 +204,21 @@ export default function WheelPage() {
   };
 
   // Wheel is now publicly accessible - no authentication checks needed
+
+  if (!ready) {
+    return null;
+  }
+
+  if (isMobile) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <MobileUnsupportedNotice
+          title="Wheel of Fortune"
+          description="The Wheel of Fortune experience is not available on mobile devices. Please switch to a tablet or desktop to spin the wheel."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8">

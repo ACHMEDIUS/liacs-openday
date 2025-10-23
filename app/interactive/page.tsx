@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Code, CheckCircle, XCircle, Trophy } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { MobileUnsupportedNotice } from '@/components/common/MobileNotice';
 
 interface Question {
   id: string;
@@ -82,6 +84,8 @@ print(result)`,
 ];
 
 export default function InteractivePage() {
+  const isMobile = useIsMobile();
+  const [ready, setReady] = useState(false);
   // Removed authentication requirement - interactive programming is now publicly accessible
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -130,6 +134,25 @@ export default function InteractivePage() {
 
   const isCorrect = selectedAnswer === sampleQuestions[currentQuestion].correctAnswer;
   const isCompleted = answeredQuestions.every(answered => answered);
+
+  useEffect(() => {
+    setReady(true);
+  }, []);
+
+  if (!ready) {
+    return null;
+  }
+
+  if (isMobile) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <MobileUnsupportedNotice
+          title="Interactive Programming"
+          description="This interactive is best experienced on larger screens. Please switch to a tablet or desktop to continue the challenge."
+        />
+      </div>
+    );
+  }
 
   // Interactive programming is now publicly accessible - no authentication checks needed
 

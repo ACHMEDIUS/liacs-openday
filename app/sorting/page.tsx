@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
@@ -18,8 +18,12 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { MobileUnsupportedNotice } from '@/components/common/MobileNotice';
 
 export default function SortingPage() {
+  const isMobile = useIsMobile();
+  const [ready, setReady] = useState(false);
   const [arraySize, setArraySize] = useState(24);
   const [speed, setSpeed] = useState(220);
   const [compareMode, setCompareMode] = useState(false);
@@ -28,13 +32,33 @@ export default function SortingPage() {
   const [leftRunning, setLeftRunning] = useState(false);
   const [rightRunning, setRightRunning] = useState(false);
 
+  useEffect(() => {
+    setReady(true);
+  }, []);
+
+  if (!ready) {
+    return null;
+  }
+
+  if (isMobile) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <MobileUnsupportedNotice
+          title="Sorting Algorithms"
+          description="The sorting visualizer is designed for desktop screens. Please switch devices to explore the algorithms."
+        />
+      </div>
+    );
+  }
+
   const anyRunning = leftRunning || rightRunning;
 
+  //eslint-disable-next-line
   const regenerateArray = useCallback(
     (size: number = arraySize) => {
       const next = createRandomArray(size);
       setBaseArray(next);
-      setArrayVersion((v) => v + 1);
+      setArrayVersion(v => v + 1);
     },
     [arraySize]
   );
@@ -58,6 +82,7 @@ export default function SortingPage() {
     setCompareMode(checked);
   };
 
+  // eslint-disable-next-line
   const helperSections = useMemo(
     () => [
       {
@@ -85,8 +110,8 @@ export default function SortingPage() {
       <header className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold text-leiden">Sorting Algorithm Studio</h1>
         <p className="max-w-3xl text-muted-foreground">
-          Experiment with classic sorting strategies, inspect their complexity, and compare two algorithms on
-          the same input to see how their approaches differ in real time.
+          Experiment with classic sorting strategies, inspect their complexity, and compare two
+          algorithms on the same input to see how their approaches differ in real time.
         </p>
       </header>
 
@@ -100,7 +125,12 @@ export default function SortingPage() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <DialogTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-leiden" aria-label="How to use">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-leiden"
+                      aria-label="How to use"
+                    >
                       <CircleHelp className="h-5 w-5" />
                     </Button>
                   </DialogTrigger>
@@ -115,11 +145,11 @@ export default function SortingPage() {
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 text-sm text-muted-foreground">
-                  {helperSections.map((section) => (
+                  {helperSections.map(section => (
                     <div key={section.title} className="space-y-2">
                       <div className="font-medium text-foreground">{section.title}</div>
                       <ul className="list-disc space-y-1 pl-5">
-                        {section.points.map((point) => (
+                        {section.points.map(point => (
                           <li key={point}>{point}</li>
                         ))}
                       </ul>
@@ -133,7 +163,9 @@ export default function SortingPage() {
         <CardContent className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-1 flex-col gap-4 sm:flex-row">
             <div className="w-full max-w-sm space-y-2">
-              <Label className="text-sm font-medium">Array size: <span className="font-semibold">{arraySize}</span></Label>
+              <Label className="text-sm font-medium">
+                Array size: <span className="font-semibold">{arraySize}</span>
+              </Label>
               <Slider
                 value={[arraySize]}
                 onValueChange={handleArraySizeChange}
@@ -145,17 +177,31 @@ export default function SortingPage() {
               />
             </div>
             <div className="w-full max-w-sm space-y-2">
-              <Label className="text-sm font-medium">Speed: <span className="font-semibold">{speed} ms</span></Label>
-              <Slider value={[speed]} onValueChange={handleSpeedChange} min={40} max={1200} step={20} />
+              <Label className="text-sm font-medium">
+                Speed: <span className="font-semibold">{speed} ms</span>
+              </Label>
+              <Slider
+                value={[speed]}
+                onValueChange={handleSpeedChange}
+                min={40}
+                max={1200}
+                step={20}
+              />
             </div>
           </div>
 
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             <div className="flex items-center gap-3">
-              <Switch checked={compareMode} onCheckedChange={toggleCompareMode} disabled={anyRunning} />
+              <Switch
+                checked={compareMode}
+                onCheckedChange={toggleCompareMode}
+                disabled={anyRunning}
+              />
               <div>
                 <Label className="text-sm font-medium">Compare algorithms</Label>
-                <p className="text-xs text-muted-foreground">Toggle off to focus on a single visualizer.</p>
+                <p className="text-xs text-muted-foreground">
+                  Toggle off to focus on a single visualizer.
+                </p>
               </div>
             </div>
             <Button
