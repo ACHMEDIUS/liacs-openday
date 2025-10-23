@@ -94,11 +94,11 @@ export default function RootLayout({
       <head>
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/UniLeidenLogo.png" />
-        <meta name="theme-color" content="#1f2937" />
+        <meta name="theme-color" content="#0f172a" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${bitcount.variable} ${domine.variable} max-w-svw m-0 flex min-h-screen flex-col bg-white p-0 antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${bitcount.variable} ${domine.variable} max-w-svw m-0 flex min-h-screen flex-col bg-background p-0 font-domine text-foreground antialiased`}
       >
         <AnalyticsProvider />
         <ClientLayout>{children}</ClientLayout>

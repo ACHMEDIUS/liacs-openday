@@ -18,8 +18,8 @@ module.exports = {
         domine: ['var(--font-domine)', 'serif'],
       },
       colors: {
-        leiden: '#001158',
-        science: '#f46e32',
+        leiden: '#10b981',
+        science: '#3b82f6',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {

@@ -71,7 +71,7 @@ export default function QRCode({
     if (onReady && qrCode.current) {
       onReady(qrCode.current);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); //TODO: fix properly
 
   useEffect(() => {
