@@ -184,7 +184,6 @@ export default function AdminPage() {
     setQnaQuestions(prev => prev.filter(q => q.id !== questionId));
   };
 
-
   if (loading || isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">

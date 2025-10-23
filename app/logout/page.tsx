@@ -35,8 +35,8 @@ export default function LogoutPage() {
     };
 
     performLogout();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); //TODO: fix properly 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); //TODO: fix properly
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">

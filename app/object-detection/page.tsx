@@ -19,9 +19,36 @@ interface DetectionBox {
 }
 
 const SAMPLE_BOXES: DetectionBox[] = [
-  { id: 1, label: 'Person', confidence: 0.98, color: '#2563eb', x: 18, y: 12, width: 42, height: 76 },
-  { id: 2, label: 'Laptop', confidence: 0.92, color: '#16a34a', x: 45, y: 48, width: 40, height: 28 },
-  { id: 3, label: 'Coffee', confidence: 0.74, color: '#f97316', x: 68, y: 60, width: 18, height: 22 },
+  {
+    id: 1,
+    label: 'Person',
+    confidence: 0.98,
+    color: '#2563eb',
+    x: 18,
+    y: 12,
+    width: 42,
+    height: 76,
+  },
+  {
+    id: 2,
+    label: 'Laptop',
+    confidence: 0.92,
+    color: '#16a34a',
+    x: 45,
+    y: 48,
+    width: 40,
+    height: 28,
+  },
+  {
+    id: 3,
+    label: 'Coffee',
+    confidence: 0.74,
+    color: '#f97316',
+    x: 68,
+    y: 60,
+    width: 18,
+    height: 22,
+  },
 ];
 
 export default function ObjectDetectionPage() {
@@ -30,14 +57,14 @@ export default function ObjectDetectionPage() {
   const [threshold, setThreshold] = useState(60);
 
   const filteredBoxes = useMemo(
-    () => boxes.filter((box) => box.confidence * 100 >= threshold),
+    () => boxes.filter(box => box.confidence * 100 >= threshold),
     [boxes, threshold]
   );
 
-  const toggleStream = () => setStreaming((prev) => !prev);
+  const toggleStream = () => setStreaming(prev => !prev);
 
   const loadSample = () => {
-    setBoxes(SAMPLE_BOXES.map((box) => ({ ...box })));
+    setBoxes(SAMPLE_BOXES.map(box => ({ ...box })));
   };
 
   const clearBoxes = () => setBoxes([]);
@@ -47,8 +74,9 @@ export default function ObjectDetectionPage() {
       <header className="space-y-2">
         <h1 className="text-3xl font-bold text-leiden">Object Detection Lab</h1>
         <p className="text-muted-foreground">
-          Prototype YOLOv12 running in the browser. Capture frames, tune thresholds, and visualise detections with a
-          responsive overlay. Integration is wired for the <Badge variant="outline">YOLOv12</Badge> pipeline from{' '}
+          Prototype YOLOv12 running in the browser. Capture frames, tune thresholds, and visualise
+          detections with a responsive overlay. Integration is wired for the{' '}
+          <Badge variant="outline">YOLOv12</Badge> pipeline from{' '}
           <a
             href="https://github.com/sunsmarterjie/yolov12"
             target="_blank"
@@ -67,8 +95,8 @@ export default function ObjectDetectionPage() {
             <div>
               <CardTitle className="text-xl font-semibold text-leiden">Live canvas</CardTitle>
               <p className="text-sm text-muted-foreground">
-                Use the buttons below to simulate camera capture or upload media. Bounding boxes update as detections
-                stream in.
+                Use the buttons below to simulate camera capture or upload media. Bounding boxes
+                update as detections stream in.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -96,7 +124,7 @@ export default function ObjectDetectionPage() {
                 ) : null}
               </div>
 
-              {filteredBoxes.map((box) => (
+              {filteredBoxes.map(box => (
                 <div
                   key={box.id}
                   className="absolute rounded border-2 bg-black/20 backdrop-blur-[1px]"
@@ -113,7 +141,9 @@ export default function ObjectDetectionPage() {
                     style={{ backgroundColor: box.color, borderColor: box.color }}
                   >
                     {box.label}{' '}
-                    <span className="font-mono text-[11px] opacity-80">{Math.round(box.confidence * 100)}%</span>
+                    <span className="font-mono text-[11px] opacity-80">
+                      {Math.round(box.confidence * 100)}%
+                    </span>
                   </div>
                 </div>
               ))}
@@ -122,7 +152,11 @@ export default function ObjectDetectionPage() {
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 <Button onClick={toggleStream} className="bg-leiden text-white hover:bg-leiden/90">
-                  {streaming ? <Pause className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
+                  {streaming ? (
+                    <Pause className="mr-2 h-4 w-4" />
+                  ) : (
+                    <Play className="mr-2 h-4 w-4" />
+                  )}
                   {streaming ? 'Pause stream' : 'Start stream'}
                 </Button>
                 <Button variant="outline">
@@ -134,7 +168,13 @@ export default function ObjectDetectionPage() {
                   <span>Confidence threshold</span>
                   <span>{threshold}%</span>
                 </div>
-                <Slider value={[threshold]} onValueChange={(value) => setThreshold(value[0])} min={30} max={95} step={5} />
+                <Slider
+                  value={[threshold]}
+                  onValueChange={value => setThreshold(value[0])}
+                  min={30}
+                  max={95}
+                  step={5}
+                />
               </div>
             </div>
           </CardContent>
@@ -143,20 +183,24 @@ export default function ObjectDetectionPage() {
         <div className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg font-semibold text-leiden">Pipeline checklist</CardTitle>
+              <CardTitle className="text-lg font-semibold text-leiden">
+                Pipeline checklist
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-muted-foreground">
               <p>
-                • Compile the <code className="rounded bg-muted px-1 py-0.5">yolov12n</code> weights to ONNX, then to
-                WebGPU/WebAssembly using <code className="rounded bg-muted px-1 py-0.5">onnxruntime-web</code> or
+                • Compile the <code className="rounded bg-muted px-1 py-0.5">yolov12n</code> weights
+                to ONNX, then to WebGPU/WebAssembly using{' '}
+                <code className="rounded bg-muted px-1 py-0.5">onnxruntime-web</code> or
                 <code className="rounded bg-muted px-1 py-0.5">webgpu-torch</code>.
               </p>
               <p>
-                • Warm up the model with a dummy tensor and reuse the same inference session to minimise allocation
-                overhead between frames.
+                • Warm up the model with a dummy tensor and reuse the same inference session to
+                minimise allocation overhead between frames.
               </p>
               <p>
-                • Run post-processing (sigmoid + non-max suppression) on a worker thread to keep the UI responsive.
+                • Run post-processing (sigmoid + non-max suppression) on a worker thread to keep the
+                UI responsive.
               </p>
             </CardContent>
           </Card>
@@ -171,7 +215,11 @@ export default function ObjectDetectionPage() {
                 variant="outline"
                 className="w-full justify-start border-dashed border-leiden text-leiden hover:bg-leiden/10"
               >
-                <a href="https://github.com/sunsmarterjie/yolov12" target="_blank" rel="noopener noreferrer">
+                <a
+                  href="https://github.com/sunsmarterjie/yolov12"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <Github className="mr-2 h-4 w-4" /> Explore YOLOv12 repository
                 </a>
               </Button>
@@ -184,7 +232,8 @@ export default function ObjectDetectionPage() {
                   rel="noopener noreferrer"
                 >
                   WebNN API
-                </a>{' '}for experimental acceleration.
+                </a>{' '}
+                for experimental acceleration.
               </p>
             </CardContent>
           </Card>

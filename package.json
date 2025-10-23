@@ -6,19 +6,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "start:static": "npx serve@latest out",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "typecheck": "tsc --noEmit",
+    "type-check": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "clean": "rm -rf .next out",
-    "analyze": "ANALYZE=true npm run build",
-    "unused": "npx depcheck"
+    "clean": "rm -rf .next out"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.14",
