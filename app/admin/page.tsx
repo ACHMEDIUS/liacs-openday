@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, ChangeEvent } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -12,13 +12,41 @@ import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { GENERAL_SETTINGS_STORAGE_KEY } from '@/lib/constants';
+import { DEFAULT_YOUTUBE_URL, isValidYouTubeUrl } from '@/lib/youtube';
+import programmingQuestionsData, {
+  ProgrammingQuestion,
+} from '@/lib/data/programming/questions';
+import {
   Loader2,
   Settings,
   MessageSquare,
   Gamepad2,
   Code,
   Plus,
-  Edit,
   Trash2,
   Save,
   CheckCircle,
@@ -35,96 +63,114 @@ interface WheelSettings {
   confettiEnabled: boolean;
 }
 
+type QuestionStatus = 'pending' | 'approved' | 'denied';
+
 interface Question {
   id: string;
-  question: string;
-  timestamp: number;
-  approved: boolean;
-  userEmail?: string;
+  text: string;
+  status: QuestionStatus;
+  accepted: boolean;
+  main: boolean;
+  answer: string;
+  createdAt: number | null;
 }
 
-interface ProgrammingQuestion {
-  id: string;
-  language: string;
-  title: string;
-  description: string;
-  code: string;
-  options: string[];
-  correctAnswer: number;
-  explanation: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
-  category: string;
-  createdAt: number;
-}
+type GeneralSettings = {
+  eventTitle: string;
+  eventDescription: string;
+  eventDate: string;
+  youtubeLink: string;
+};
+
+const defaultGeneralSettings: GeneralSettings = {
+  eventTitle: 'LIACS Open Day',
+  eventDescription: 'Welcome to the Leiden Institute of Advanced Computer Science Open Day!',
+  eventDate: new Date().toISOString().split('T')[0],
+  youtubeLink: DEFAULT_YOUTUBE_URL,
+};
 
 // Default settings
 const defaultWheelSettings: WheelSettings = {
-  items: [
-    'LIACS Hoodie',
-    'LIACS T-Shirt',
-    'Computer Science Book',
-    'Programming Stickers',
-    'University Pen Set',
-    'LIACS Mug',
-    'Tech Conference Ticket',
-    'Programming Tutorial Access',
-  ],
-  colors: ['#001158', '#f46e32', '#003366', '#ff6b35', '#004080', '#e55a2b', '#002244', '#d4481f'],
+  items: [],
+  colors: [],
   spinDuration: 3000,
   autoSpin: false,
-  soundEnabled: true,
+  soundEnabled: false,
   confettiEnabled: true,
 };
-
-const sampleQnaQuestions: Question[] = [
-  {
-    id: '1',
-    question: 'What programming languages are taught in the Computer Science program?',
-    timestamp: Date.now() - 3600000,
-    approved: false,
-    userEmail: 'student@example.com',
-  },
-  {
-    id: '2',
-    question: 'Are there opportunities for internships during the program?',
-    timestamp: Date.now() - 7200000,
-    approved: true,
-    userEmail: 'visitor@example.com',
-  },
-];
-
-const sampleProgrammingQuestions: ProgrammingQuestion[] = [
-  {
-    id: '1',
-    language: 'Python',
-    title: 'List Comprehension Bug',
-    description: 'This code should create a list of squares for even numbers, but it has a bug:',
-    code: `numbers = [1, 2, 3, 4, 5, 6]
-result = [x**2 for x in numbers if x % 2 = 0]
-print(result)`,
-    options: [
-      'Change x**2 to x*2',
-      'Change = to ==',
-      'Change % to //',
-      'Add parentheses around x % 2',
-    ],
-    correctAnswer: 1,
-    explanation: 'The bug is using = (assignment) instead of == (comparison) in the condition.',
-    difficulty: 'Easy',
-    category: 'Syntax',
-    createdAt: Date.now() - 86400000,
-  },
-];
 
 export default function AdminPage() {
   const { user, loading } = useAuth();
   const [activeTab, setActiveTab] = useState('wheel');
   const [wheelSettings, setWheelSettings] = useState<WheelSettings>(defaultWheelSettings);
-  const [qnaQuestions, setQnaQuestions] = useState<Question[]>(sampleQnaQuestions);
-  const [programmingQuestions] = useState<ProgrammingQuestion[]>(sampleProgrammingQuestions);
+  const [qnaQuestions, setQnaQuestions] = useState<Question[]>([]);
+  const programmingQuestions: ProgrammingQuestion[] = programmingQuestionsData;
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [questionDialogOpen, setQuestionDialogOpen] = useState(false);
+  const [newQuestionText, setNewQuestionText] = useState('');
+  const [isQuestionSubmitting, setIsQuestionSubmitting] = useState(false);
+  const [questionError, setQuestionError] = useState('');
+  const [questionFormError, setQuestionFormError] = useState('');
+  const [answerDrafts, setAnswerDrafts] = useState<Record<string, string>>({});
+  const [savingAnswerFor, setSavingAnswerFor] = useState<string | null>(null);
+  const [questionActionLoading, setQuestionActionLoading] = useState<Record<string, boolean>>({});
+  const [generalSettings, setGeneralSettings] =
+    useState<GeneralSettings>(defaultGeneralSettings);
+  const [generalSaveMessage, setGeneralSaveMessage] = useState('');
+  const [generalError, setGeneralError] = useState('');
+
+  const setActionLoading = useCallback((questionId: string, isLoading: boolean) => {
+    setQuestionActionLoading(prev => ({
+      ...prev,
+      [questionId]: isLoading,
+    }));
+  }, []);
+
+  const handleGeneralInputChange = useCallback(
+    (field: keyof GeneralSettings) =>
+      (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const value = event.target.value;
+        setGeneralSettings(prev => ({ ...prev, [field]: value }));
+        setGeneralSaveMessage('');
+        if (field === 'youtubeLink') {
+          setGeneralError('');
+        }
+      },
+    []
+  );
+
+  const saveGeneralSettings = useCallback(() => {
+    const trimmedTitle = generalSettings.eventTitle.trim();
+    const trimmedDescription = generalSettings.eventDescription.trim();
+    const trimmedLink = generalSettings.youtubeLink.trim() || DEFAULT_YOUTUBE_URL;
+
+    if (trimmedLink && !isValidYouTubeUrl(trimmedLink)) {
+      setGeneralError('Please enter a valid YouTube or youtu.be link.');
+      return;
+    }
+
+    const payload: GeneralSettings = {
+      eventTitle: trimmedTitle || defaultGeneralSettings.eventTitle,
+      eventDescription: trimmedDescription || defaultGeneralSettings.eventDescription,
+      eventDate: generalSettings.eventDate || defaultGeneralSettings.eventDate,
+      youtubeLink: trimmedLink,
+    };
+
+    setGeneralError('');
+    setGeneralSettings(payload);
+
+    try {
+      localStorage.setItem(GENERAL_SETTINGS_STORAGE_KEY, JSON.stringify(payload));
+      setGeneralSaveMessage('General settings saved.');
+      window.dispatchEvent(new CustomEvent('general-settings-updated', { detail: payload }));
+      setTimeout(() => setGeneralSaveMessage(''), 3000);
+    } catch (error) {
+      console.error('Failed to save general settings:', error);
+      setGeneralError('Unable to save settings. Please try again.');
+    }
+  }, [generalSettings]);
 
   // Load settings from localStorage on mount
   useEffect(() => {
@@ -134,6 +180,274 @@ export default function AdminPage() {
     }
     setIsLoading(false);
   }, []);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(GENERAL_SETTINGS_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored) as Partial<GeneralSettings>;
+        setGeneralSettings(prev => ({
+          ...prev,
+          ...parsed,
+          youtubeLink: parsed.youtubeLink ?? prev.youtubeLink,
+        }));
+      }
+    } catch (error) {
+      console.error('Failed to load general settings:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    const questionsQuery = query(collection(db, 'questions'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(
+      questionsQuery,
+      snapshot => {
+        const nextQuestions: Question[] = snapshot.docs
+          .map(docSnapshot => {
+            const data = docSnapshot.data() as {
+              text?: unknown;
+              question?: unknown;
+              accepted?: unknown;
+              approved?: unknown;
+              status?: unknown;
+              main?: unknown;
+              answer?: unknown;
+              createdAt?: unknown;
+            };
+            const rawCreatedAt = data.createdAt;
+            let createdAt: number | null = null;
+            if (typeof rawCreatedAt === 'number') {
+              createdAt = rawCreatedAt;
+            } else if (rawCreatedAt && typeof (rawCreatedAt as { toMillis?: () => number }).toMillis === 'function') {
+              createdAt = (rawCreatedAt as { toMillis: () => number }).toMillis();
+            }
+            const rawText =
+              typeof data.text === 'string'
+                ? data.text
+                : typeof data.question === 'string'
+                  ? data.question
+                  : '';
+            const text = rawText.trim();
+            if (!text) {
+              return null;
+            }
+            const accepted =
+              typeof data.accepted === 'boolean'
+                ? data.accepted
+                : typeof data.approved === 'boolean'
+                  ? data.approved
+                  : false;
+            const rawStatus = data.status;
+            const status: QuestionStatus =
+              rawStatus === 'approved' || rawStatus === 'denied' || rawStatus === 'pending'
+                ? rawStatus
+                : accepted
+                  ? 'approved'
+                  : 'pending';
+            const main = Boolean(data.main);
+            const answer = typeof data.answer === 'string' ? data.answer : '';
+
+            return {
+              id: docSnapshot.id,
+              text,
+              status,
+              accepted: Boolean(accepted),
+              main,
+              answer,
+              createdAt,
+            } satisfies Question;
+          })
+          .filter((value): value is Question => Boolean(value));
+
+        setQnaQuestions(nextQuestions);
+        setAnswerDrafts(prevDrafts => {
+          const updatedDrafts: Record<string, string> = {};
+          nextQuestions.forEach(question => {
+            updatedDrafts[question.id] =
+              question.id in prevDrafts ? prevDrafts[question.id] : question.answer;
+          });
+          return updatedDrafts;
+        });
+        setQuestionError('');
+      },
+      error => {
+        console.error('Failed to load questions:', error);
+        setQuestionError('Unable to load questions right now. Please try again later.');
+      }
+    );
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleQuestionDialogChange = useCallback(
+    (open: boolean) => {
+      setQuestionDialogOpen(open);
+      if (!open) {
+        setNewQuestionText('');
+        setQuestionFormError('');
+      }
+    },
+    []
+  );
+
+  const handleCreateQuestion = useCallback(async () => {
+    if (!newQuestionText.trim()) {
+      setQuestionFormError('Question cannot be empty.');
+      return;
+    }
+
+    setIsQuestionSubmitting(true);
+    setQuestionFormError('');
+    setQuestionError('');
+
+    try {
+      await addDoc(collection(db, 'questions'), {
+        text: newQuestionText.trim(),
+        accepted: false,
+        status: 'pending' satisfies QuestionStatus,
+        main: false,
+        answer: '',
+        createdAt: serverTimestamp(),
+      });
+      setNewQuestionText('');
+      setQuestionDialogOpen(false);
+    } catch (error) {
+      console.error('Failed to add question:', error);
+      setQuestionFormError('Failed to add question. Please try again.');
+    } finally {
+      setIsQuestionSubmitting(false);
+    }
+  }, [newQuestionText]);
+
+  const approveQuestion = useCallback(
+    async (questionId: string) => {
+      setActionLoading(questionId, true);
+      try {
+        setQuestionError('');
+        await updateDoc(doc(db, 'questions', questionId), {
+          accepted: true,
+          status: 'approved',
+        });
+      } catch (error) {
+        console.error('Failed to approve question:', error);
+        setQuestionError('Failed to approve the question. Please try again.');
+      } finally {
+        setActionLoading(questionId, false);
+      }
+    },
+    [setActionLoading]
+  );
+
+  const denyQuestion = useCallback(
+    async (questionId: string) => {
+      setActionLoading(questionId, true);
+      try {
+        setQuestionError('');
+        await updateDoc(doc(db, 'questions', questionId), {
+          accepted: false,
+          status: 'denied',
+          main: false,
+        });
+      } catch (error) {
+        console.error('Failed to deny question:', error);
+        setQuestionError('Failed to deny the question. Please try again.');
+      } finally {
+        setActionLoading(questionId, false);
+      }
+    },
+    [setActionLoading]
+  );
+
+  const deleteQnaQuestion = useCallback(
+    async (questionId: string) => {
+      setActionLoading(questionId, true);
+      try {
+        setQuestionError('');
+        await deleteDoc(doc(db, 'questions', questionId));
+      } catch (error) {
+        console.error('Failed to delete question:', error);
+        setQuestionError('Failed to delete the question. Please try again.');
+      } finally {
+        setActionLoading(questionId, false);
+      }
+    },
+    [setActionLoading]
+  );
+
+  const setAsMainQuestion = useCallback(
+    async (questionId: string) => {
+      setActionLoading(questionId, true);
+      try {
+        setQuestionError('');
+        const currentMainSnapshot = await getDocs(
+          query(collection(db, 'questions'), where('main', '==', true))
+        );
+
+        await Promise.all(
+          currentMainSnapshot.docs
+            .filter(docSnapshot => docSnapshot.id !== questionId)
+            .map(docSnapshot =>
+              updateDoc(docSnapshot.ref, {
+                main: false,
+              })
+            )
+        );
+
+        await updateDoc(doc(db, 'questions', questionId), {
+          main: true,
+          accepted: true,
+          status: 'approved',
+        });
+      } catch (error) {
+        console.error('Failed to set question as current:', error);
+        setQuestionError('Failed to mark the question as current. Please try again.');
+      } finally {
+        setActionLoading(questionId, false);
+      }
+    },
+    [setActionLoading]
+  );
+
+  const clearMainQuestion = useCallback(
+    async (questionId: string) => {
+      setActionLoading(questionId, true);
+      try {
+        setQuestionError('');
+        await updateDoc(doc(db, 'questions', questionId), {
+          main: false,
+        });
+      } catch (error) {
+        console.error('Failed to clear main question:', error);
+        setQuestionError('Failed to clear the current question. Please try again.');
+      } finally {
+        setActionLoading(questionId, false);
+      }
+    },
+    [setActionLoading]
+  );
+
+  const saveAnswer = useCallback(
+    async (questionId: string) => {
+      const draft = (answerDrafts[questionId] ?? '').trim();
+      setSavingAnswerFor(questionId);
+      try {
+        setQuestionError('');
+        await updateDoc(doc(db, 'questions', questionId), {
+          answer: draft,
+        });
+        setAnswerDrafts(prev => ({
+          ...prev,
+          [questionId]: draft,
+        }));
+      } catch (error) {
+        console.error('Failed to save answer:', error);
+        setQuestionError('Failed to save the answer. Please try again.');
+      } finally {
+        setSavingAnswerFor(null);
+      }
+    },
+    [answerDrafts]
+  );
 
   const saveSettings = async () => {
     setIsSaving(true);
@@ -150,7 +464,18 @@ export default function AdminPage() {
   };
 
   const updateWheelItems = (items: string[]) => {
-    setWheelSettings(prev => ({ ...prev, items }));
+    setWheelSettings(prev => {
+      const defaultColor = '#001158';
+      const colors = [...prev.colors];
+      if (colors.length < items.length) {
+        while (colors.length < items.length) {
+          colors.push(defaultColor);
+        }
+      } else if (colors.length > items.length) {
+        colors.length = items.length;
+      }
+      return { ...prev, items, colors };
+    });
   };
 
   const addWheelItem = () => {
@@ -173,15 +498,6 @@ export default function AdminPage() {
     const newColors = [...wheelSettings.colors];
     newColors[index] = value;
     setWheelSettings(prev => ({ ...prev, colors: newColors }));
-  };
-
-  // Q&A Functions
-  const approveQuestion = (questionId: string) => {
-    setQnaQuestions(prev => prev.map(q => (q.id === questionId ? { ...q, approved: true } : q)));
-  };
-
-  const deleteQnaQuestion = (questionId: string) => {
-    setQnaQuestions(prev => prev.filter(q => q.id !== questionId));
   };
 
   if (loading || isLoading) {
@@ -227,19 +543,23 @@ export default function AdminPage() {
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="wheel" className="flex items-center gap-2">
             <Gamepad2 className="h-4 w-4" />
-            Wheel Settings
+            <span className="hidden text-sm font-medium sm:inline">Wheel Settings</span>
+            <span className="sr-only sm:hidden">Wheel Settings</span>
           </TabsTrigger>
           <TabsTrigger value="qna" className="flex items-center gap-2">
             <MessageSquare className="h-4 w-4" />
-            Q&A Management
+            <span className="hidden text-sm font-medium sm:inline">Q&amp;A Management</span>
+            <span className="sr-only sm:hidden">Q&amp;A Management</span>
           </TabsTrigger>
           <TabsTrigger value="programming" className="flex items-center gap-2">
             <Code className="h-4 w-4" />
-            Programming Questions
+            <span className="hidden text-sm font-medium sm:inline">Programming Questions</span>
+            <span className="sr-only sm:hidden">Programming Questions</span>
           </TabsTrigger>
           <TabsTrigger value="general" className="flex items-center gap-2">
             <Settings className="h-4 w-4" />
-            General Settings
+            <span className="hidden text-sm font-medium sm:inline">General Settings</span>
+            <span className="sr-only sm:hidden">General Settings</span>
           </TabsTrigger>
         </TabsList>
 
@@ -383,13 +703,62 @@ export default function AdminPage() {
         {/* Q&A Management Tab */}
         <TabsContent value="qna" className="space-y-6">
           <Card>
-            <CardHeader>
-              <CardTitle>Q&A Questions ({qnaQuestions.length})</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Manage submitted questions from visitors
-              </p>
+            <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <CardTitle>Q&A Questions ({qnaQuestions.length})</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Manage submitted questions from visitors
+                </p>
+              </div>
+              <Dialog open={questionDialogOpen} onOpenChange={handleQuestionDialogChange}>
+                <DialogTrigger asChild>
+                  <Button className="bg-leiden hover:bg-leiden/90">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Question
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add Question</DialogTitle>
+                    <DialogDescription>Publish a new visitor question for review.</DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-3">
+                    <Label htmlFor="new-question">Question</Label>
+                    <Textarea
+                      id="new-question"
+                      value={newQuestionText}
+                      onChange={event => setNewQuestionText(event.target.value)}
+                      placeholder="Enter the question text"
+                      rows={4}
+                      disabled={isQuestionSubmitting}
+                    />
+                    {questionFormError && (
+                      <Alert variant="destructive">{questionFormError}</Alert>
+                    )}
+                  </div>
+                  <DialogFooter className="mt-4">
+                    <DialogClose asChild>
+                      <Button variant="outline" disabled={isQuestionSubmitting}>
+                        Cancel
+                      </Button>
+                    </DialogClose>
+                    <Button
+                      onClick={handleCreateQuestion}
+                      disabled={isQuestionSubmitting}
+                      className="bg-leiden hover:bg-leiden/90"
+                    >
+                      {isQuestionSubmitting ? 'Saving...' : 'Save Question'}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </CardHeader>
             <CardContent>
+              {questionError && (
+                <Alert variant="destructive" className="mb-4">
+                  {questionError}
+                </Alert>
+              )}
               <div className="space-y-4">
                 {qnaQuestions.length === 0 ? (
                   <p className="py-8 text-center text-muted-foreground">
@@ -399,47 +768,154 @@ export default function AdminPage() {
                   qnaQuestions.map(question => (
                     <Card
                       key={question.id}
-                      className={`${question.approved ? 'border-green-200' : 'border-orange-200'}`}
+                      className={`border ${
+                        question.main
+                          ? 'border-leiden shadow-[0_0_0_1px_rgba(0,17,88,0.3)]'
+                          : question.status === 'approved'
+                            ? 'border-green-200'
+                            : question.status === 'denied'
+                              ? 'border-destructive/40'
+                              : 'border-orange-200'
+                      }`}
                     >
-                      <CardContent className="p-4">
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1">
-                            <div className="mb-2 flex items-center gap-2">
-                              {question.approved ? (
-                                <CheckCircle className="h-4 w-4 text-green-600" />
-                              ) : (
-                                <XCircle className="h-4 w-4 text-orange-600" />
-                              )}
-                              <Badge variant={question.approved ? 'default' : 'secondary'}>
-                                {question.approved ? 'Approved' : 'Pending'}
-                              </Badge>
-                              <span className="text-sm text-muted-foreground">
-                                {new Date(question.timestamp).toLocaleString()}
-                              </span>
-                            </div>
-                            <p className="mb-2 text-sm text-muted-foreground">
-                              From: {question.userEmail}
-                            </p>
-                            <p className="text-foreground">{question.question}</p>
-                          </div>
-                          <div className="flex gap-2">
-                            {!question.approved && (
-                              <Button
-                                size="sm"
-                                onClick={() => approveQuestion(question.id)}
-                                className="bg-green-600 hover:bg-green-700"
-                              >
-                                Approve
-                              </Button>
-                            )}
+                      <CardContent className="space-y-4 p-5">
+                        <div className="flex flex-wrap items-center gap-2">
+                          {question.status === 'approved' ? (
+                            <Badge className="bg-green-600 text-white hover:bg-green-600">
+                              <CheckCircle className="mr-1 h-3.5 w-3.5" />
+                              Approved
+                            </Badge>
+                          ) : question.status === 'denied' ? (
+                            <Badge className="bg-destructive text-white hover:bg-destructive">
+                              <XCircle className="mr-1 h-3.5 w-3.5" />
+                              Denied
+                            </Badge>
+                          ) : (
+                            <Badge variant="secondary">
+                              <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin text-current" />
+                              Pending
+                            </Badge>
+                          )}
+                          {question.main && (
+                            <Badge variant="outline" className="border-leiden text-leiden">
+                              Current question
+                            </Badge>
+                          )}
+                          <span className="text-sm text-muted-foreground">
+                            {question.createdAt
+                              ? new Date(question.createdAt).toLocaleString()
+                              : 'Timestamp pending'}
+                          </span>
+                        </div>
+
+                        <p className="text-base font-medium text-foreground">{question.text}</p>
+
+                        <div className="space-y-2">
+                          <Label htmlFor={`answer-${question.id}`} className="text-xs uppercase">
+                            Answer (optional)
+                          </Label>
+                          <Textarea
+                            id={`answer-${question.id}`}
+                            value={answerDrafts[question.id] ?? ''}
+                            onChange={event =>
+                              setAnswerDrafts(prev => ({
+                                ...prev,
+                                [question.id]: event.target.value,
+                              }))
+                            }
+                            rows={3}
+                            placeholder="Type a short answer or leave empty"
+                          />
+                          <div className="flex items-center justify-end">
                             <Button
                               size="sm"
-                              variant="destructive"
-                              onClick={() => deleteQnaQuestion(question.id)}
+                              onClick={() => saveAnswer(question.id)}
+                              disabled={savingAnswerFor === question.id}
+                              className="flex items-center gap-2 bg-emerald-400 text-slate-950 hover:bg-emerald-300"
                             >
-                              Delete
+                              {savingAnswerFor === question.id ? (
+                                <>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  Saving...
+                                </>
+                              ) : (
+                                <>
+                                  <Save className="h-4 w-4" />
+                                  Save Answer
+                                </>
+                              )}
                             </Button>
                           </div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2">
+                          {question.status !== 'approved' && (
+                            <Button
+                              size="sm"
+                              onClick={() => approveQuestion(question.id)}
+                              disabled={questionActionLoading[question.id]}
+                              className="bg-green-600 hover:bg-green-700"
+                            >
+                              {questionActionLoading[question.id] ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                'Approve'
+                              )}
+                            </Button>
+                          )}
+                          {question.status !== 'denied' && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => denyQuestion(question.id)}
+                              disabled={questionActionLoading[question.id]}
+                            >
+                              {questionActionLoading[question.id] ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                'Deny'
+                              )}
+                            </Button>
+                          )}
+                          {question.main ? (
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => clearMainQuestion(question.id)}
+                              disabled={questionActionLoading[question.id]}
+                            >
+                              {questionActionLoading[question.id] ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                'Clear Current'
+                              )}
+                            </Button>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setAsMainQuestion(question.id)}
+                              disabled={questionActionLoading[question.id]}
+                            >
+                              {questionActionLoading[question.id] ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                'Set as Current'
+                              )}
+                            </Button>
+                          )}
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => deleteQnaQuestion(question.id)}
+                            disabled={questionActionLoading[question.id]}
+                          >
+                            {questionActionLoading[question.id] ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              'Delete'
+                            )}
+                          </Button>
                         </div>
                       </CardContent>
                     </Card>
@@ -488,9 +964,6 @@ export default function AdminPage() {
                           </div>
                         </div>
                         <div className="flex gap-2">
-                          <Button size="sm" variant="outline">
-                            <Edit className="h-4 w-4" />
-                          </Button>
                           <Button size="sm" variant="destructive">
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -520,15 +993,33 @@ export default function AdminPage() {
               <p className="text-sm text-muted-foreground">Configure global application settings</p>
             </CardHeader>
             <CardContent className="space-y-4">
+              {generalSaveMessage && (
+                <Alert className="border-green-200 bg-green-50">
+                  <CheckCircle className="h-4 w-4" />
+                  <div>{generalSaveMessage}</div>
+                </Alert>
+              )}
+              {generalError && (
+                <Alert variant="destructive">
+                  <XCircle className="h-4 w-4" />
+                  <div>{generalError}</div>
+                </Alert>
+              )}
               <div>
                 <Label htmlFor="eventTitle">Event Title</Label>
-                <Input id="eventTitle" defaultValue="LIACS Open Day" placeholder="Event title" />
+                <Input
+                  id="eventTitle"
+                  value={generalSettings.eventTitle}
+                  onChange={handleGeneralInputChange('eventTitle')}
+                  placeholder="Event title"
+                />
               </div>
               <div>
                 <Label htmlFor="eventDescription">Event Description</Label>
                 <Textarea
                   id="eventDescription"
-                  defaultValue="Welcome to the Leiden Institute of Advanced Computer Science Open Day!"
+                  value={generalSettings.eventDescription}
+                  onChange={handleGeneralInputChange('eventDescription')}
                   placeholder="Event description"
                 />
               </div>
@@ -537,8 +1028,28 @@ export default function AdminPage() {
                 <Input
                   id="eventDate"
                   type="date"
-                  defaultValue={new Date().toISOString().split('T')[0]}
+                  value={generalSettings.eventDate}
+                  onChange={handleGeneralInputChange('eventDate')}
                 />
+              </div>
+              <div>
+                <Label htmlFor="youtubeLink">YouTube Easter Egg Link</Label>
+                <Input
+                  id="youtubeLink"
+                  value={generalSettings.youtubeLink}
+                  onChange={handleGeneralInputChange('youtubeLink')}
+                  placeholder="https://www.youtube.com/watch?v=..."
+                />
+                <p className="mt-1 text-xs text-muted-foreground">
+                  This video appears when visitors type “liacs”. Accepted formats: youtube.com or
+                  youtu.be links.
+                </p>
+              </div>
+              <div className="flex justify-end">
+                <Button onClick={saveGeneralSettings} className="bg-leiden hover:bg-leiden/90">
+                  <Save className="mr-2 h-4 w-4" />
+                  Save General Settings
+                </Button>
               </div>
             </CardContent>
           </Card>
