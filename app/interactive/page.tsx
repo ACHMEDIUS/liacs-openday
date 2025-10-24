@@ -8,80 +8,9 @@ import { Badge } from '@/components/ui/badge';
 import { Code, CheckCircle, XCircle, Trophy } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { MobileUnsupportedNotice } from '@/components/common/MobileNotice';
-
-interface Question {
-  id: string;
-  language: string;
-  title: string;
-  description: string;
-  code: string;
-  options: string[];
-  correctAnswer: number;
-  explanation: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
-}
-
-const sampleQuestions: Question[] = [
-  {
-    id: '1',
-    language: 'Python',
-    title: 'List Comprehension Bug',
-    description: 'This code should create a list of squares for even numbers, but it has a bug:',
-    code: `numbers = [1, 2, 3, 4, 5, 6]
-result = [x**2 for x in numbers if x % 2 = 0]
-print(result)`,
-    options: [
-      'Change x**2 to x*2',
-      'Change = to ==',
-      'Change % to //',
-      'Add parentheses around x % 2',
-    ],
-    correctAnswer: 1,
-    explanation: 'The bug is using = (assignment) instead of == (comparison) in the condition.',
-    difficulty: 'Easy',
-  },
-  {
-    id: '2',
-    language: 'JavaScript',
-    title: 'Function Scope Issue',
-    description: 'This function should return the sum of an array, but it doesn&apos;t work:',
-    code: `function sumArray(arr) {
-  for (let i = 0; i < arr.length; i++) {
-    sum += arr[i];
-  }
-  return sum;
-}`,
-    options: [
-      'Initialize sum variable before the loop',
-      'Change let to var',
-      'Use arr.forEach instead',
-      'Add semicolon after return sum',
-    ],
-    correctAnswer: 0,
-    explanation: 'The variable "sum" is not declared. It should be initialized before the loop.',
-    difficulty: 'Medium',
-  },
-  {
-    id: '3',
-    language: 'Java',
-    title: 'Array Index Bug',
-    description: 'This code should find the maximum value in an array:',
-    code: `public static int findMax(int[] arr) {
-  int max = 0;
-  for (int i = 0; i <= arr.length; i++) {
-    if (arr[i] > max) {
-      max = arr[i];
-    }
-  }
-  return max;
-}`,
-    options: ['Change <= to <', 'Initialize max to arr[0]', 'Both A and B', 'Change i++ to ++i'],
-    correctAnswer: 2,
-    explanation:
-      'Two bugs: loop condition should be < (not <=) to avoid index out of bounds, and max should be initialized to arr[0] to handle negative numbers.',
-    difficulty: 'Hard',
-  },
-];
+import programmingQuestions, {
+  ProgrammingQuestion,
+} from '@/lib/data/programming/questions';
 
 export default function InteractivePage() {
   const isMobile = useIsMobile();
@@ -92,7 +21,7 @@ export default function InteractivePage() {
   const [showResult, setShowResult] = useState(false);
   const [score, setScore] = useState(0);
   const [answeredQuestions, setAnsweredQuestions] = useState<boolean[]>(
-    new Array(sampleQuestions.length).fill(false)
+    new Array(programmingQuestions.length).fill(false)
   );
 
   const handleAnswerSelect = (answerIndex: number) => {
@@ -105,7 +34,7 @@ export default function InteractivePage() {
 
     setShowResult(true);
 
-    if (selectedAnswer === sampleQuestions[currentQuestion].correctAnswer) {
+    if (selectedAnswer === programmingQuestions[currentQuestion].correctAnswer) {
       setScore(prev => prev + 1);
     }
 
@@ -117,7 +46,7 @@ export default function InteractivePage() {
   };
 
   const nextQuestion = () => {
-    if (currentQuestion < sampleQuestions.length - 1) {
+    if (currentQuestion < programmingQuestions.length - 1) {
       setCurrentQuestion(prev => prev + 1);
       setSelectedAnswer(null);
       setShowResult(false);
@@ -129,10 +58,10 @@ export default function InteractivePage() {
     setSelectedAnswer(null);
     setShowResult(false);
     setScore(0);
-    setAnsweredQuestions(new Array(sampleQuestions.length).fill(false));
+    setAnsweredQuestions(new Array(programmingQuestions.length).fill(false));
   };
 
-  const isCorrect = selectedAnswer === sampleQuestions[currentQuestion].correctAnswer;
+  const isCorrect = selectedAnswer === programmingQuestions[currentQuestion].correctAnswer;
   const isCompleted = answeredQuestions.every(answered => answered);
 
   useEffect(() => {
@@ -156,7 +85,7 @@ export default function InteractivePage() {
 
   // Interactive programming is now publicly accessible - no authentication checks needed
 
-  const question = sampleQuestions[currentQuestion];
+  const question: ProgrammingQuestion = programmingQuestions[currentQuestion];
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8">
@@ -169,7 +98,7 @@ export default function InteractivePage() {
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Badge variant="outline">
-            Question {currentQuestion + 1} of {sampleQuestions.length}
+            Question {currentQuestion + 1} of {programmingQuestions.length}
           </Badge>
           <Badge
             variant="outline"
@@ -187,7 +116,7 @@ export default function InteractivePage() {
         <div className="flex items-center gap-2">
           <Trophy className="h-5 w-5 text-leiden" />
           <span className="font-semibold">
-            Score: {score}/{sampleQuestions.length}
+            Score: {score}/{programmingQuestions.length}
           </span>
         </div>
       </div>
@@ -198,8 +127,8 @@ export default function InteractivePage() {
           <div>
             <strong>Quiz Completed!</strong>
             <p>
-              Final Score: {score}/{sampleQuestions.length} (
-              {Math.round((score / sampleQuestions.length) * 100)}%)
+              Final Score: {score}/{programmingQuestions.length} (
+              {Math.round((score / programmingQuestions.length) * 100)}%)
             </p>
           </div>
         </Alert>
@@ -280,7 +209,7 @@ export default function InteractivePage() {
           {/* Navigation */}
           {showResult && (
             <div className="mt-4 flex gap-2">
-              {currentQuestion < sampleQuestions.length - 1 ? (
+              {currentQuestion < programmingQuestions.length - 1 ? (
                 <Button onClick={nextQuestion} className="bg-leiden hover:bg-leiden/90">
                   Next Question
                 </Button>
@@ -296,7 +225,7 @@ export default function InteractivePage() {
 
       {/* Progress Indicator */}
       <div className="flex gap-2">
-        {sampleQuestions.map((_, index) => (
+        {programmingQuestions.map((_, index) => (
           <div
             key={index}
             className={`h-2 flex-1 rounded ${

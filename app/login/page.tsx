@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import firebaseApp from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,6 +16,14 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectPath = useMemo(() => {
+    const target = searchParams.get('redirect');
+    if (!target) {
+      return '/admin';
+    }
+    return target.startsWith('/') ? target : '/admin';
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +50,8 @@ export default function LoginPage() {
         throw new Error('Failed to set authentication cookie');
       }
 
-      router.push('/admin');
+      router.replace(redirectPath);
+      router.refresh();
     } catch (error) {
       setError((error as Error).message || 'Authentication failed');
     } finally {

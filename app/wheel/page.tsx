@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RotateCcw, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -18,28 +17,20 @@ interface WheelSettings {
 }
 
 const defaultWheelSettings: WheelSettings = {
-  items: [
-    'LIACS Hoodie',
-    'LIACS T-Shirt',
-    'Computer Science Book',
-    'Programming Stickers',
-    'University Pen Set',
-    'LIACS Mug',
-    'Tech Conference Ticket',
-    'Programming Tutorial Access',
-  ],
-  colors: ['#001158', '#f46e32', '#003366', '#ff6b35', '#004080', '#e55a2b', '#002244', '#d4481f'],
+  items: [],
+  colors: [],
   spinDuration: 3000,
   autoSpin: false,
-  soundEnabled: true,
+  soundEnabled: false,
   confettiEnabled: true,
 };
+
+const SPIN_DURATION = 3200;
 
 export default function WheelPage() {
   // Removed authentication requirement - wheel is now publicly accessible
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
-  const [result, setResult] = useState<string | null>(null);
   const [wheelSettings, setWheelSettings] = useState<WheelSettings>(defaultWheelSettings);
   const [canSpin, setCanSpin] = useState(true);
   const isMobile = useIsMobile();
@@ -56,53 +47,6 @@ export default function WheelPage() {
       setWheelSettings(JSON.parse(savedSettings));
     }
   }, []);
-
-  const playSpinSound = useCallback(() => {
-    if (!wheelSettings.soundEnabled) return;
-
-    // Create a simple beep sound
-    const audioContext = new (window.AudioContext ||
-      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-
-    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.1);
-  }, [wheelSettings.soundEnabled]);
-
-  const playWinSound = useCallback(() => {
-    if (!wheelSettings.soundEnabled) return;
-
-    // Create a celebration sound
-    const audioContext = new (window.AudioContext ||
-      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
-
-    [523, 659, 784, 1047].forEach((freq, index) => {
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-
-      oscillator.frequency.setValueAtTime(freq, audioContext.currentTime + index * 0.1);
-      gainNode.gain.setValueAtTime(0.2, audioContext.currentTime + index * 0.1);
-      gainNode.gain.exponentialRampToValueAtTime(
-        0.01,
-        audioContext.currentTime + index * 0.1 + 0.2
-      );
-
-      oscillator.start(audioContext.currentTime + index * 0.1);
-      oscillator.stop(audioContext.currentTime + index * 0.1 + 0.2);
-    });
-  }, [wheelSettings.soundEnabled]);
 
   const triggerConfetti = useCallback(() => {
     if (!wheelSettings.confettiEnabled) return;
@@ -141,39 +85,29 @@ export default function WheelPage() {
 
   const spinWheel = useCallback(() => {
     if (isSpinning || !canSpin) return;
+    if (wheelSettings.items.length === 0) return;
 
     setIsSpinning(true);
-    setResult(null);
     setCanSpin(false);
 
-    playSpinSound();
-
     // Calculate multiple full rotations plus random final position
-    const baseRotations = 5; // Always do at least 5 full rotations
-    const extraRotations = Math.random() * 3; // Add 0-3 more rotations
+    const baseRotations = 5;
+    const extraRotations = Math.random() * 0.5;
     const finalPosition = Math.random() * 360; // Final stopping position
     const totalRotation = (baseRotations + extraRotations) * 360 + finalPosition;
     const finalRotation = rotation + totalRotation;
 
     setRotation(finalRotation);
 
-    // Calculate which item was selected
-    const itemAngle = 360 / wheelSettings.items.length;
-    const normalizedRotation = finalRotation % 360;
-    const adjustedRotation = (360 - normalizedRotation + 90) % 360; // Adjust for pointer position
-    const selectedIndex = Math.floor(adjustedRotation / itemAngle) % wheelSettings.items.length;
-
     setTimeout(() => {
-      setResult(wheelSettings.items[selectedIndex]);
       setIsSpinning(false);
 
-      playWinSound();
       triggerConfetti();
 
       // Allow spinning again after a short delay
       setTimeout(() => setCanSpin(true), 2000);
-    }, wheelSettings.spinDuration);
-  }, [isSpinning, canSpin, rotation, wheelSettings, playSpinSound, playWinSound, triggerConfetti]);
+    }, SPIN_DURATION);
+  }, [isSpinning, canSpin, rotation, wheelSettings, triggerConfetti]);
 
   // Auto-spin if enabled
   useEffect(() => {
@@ -199,7 +133,6 @@ export default function WheelPage() {
 
   const resetWheel = () => {
     setRotation(0);
-    setResult(null);
     setCanSpin(true);
   };
 
@@ -229,8 +162,14 @@ export default function WheelPage() {
           <Sparkles className="h-8 w-8" />
         </h1>
         <p className="mb-8 text-lg text-muted-foreground">
-          Spin the wheel to win amazing LIACS prizes!
+          Spin the wheel to celebrate with the crowd.
         </p>
+
+        {wheelSettings.items.length === 0 ? (
+          <p className="mb-10 text-sm text-muted-foreground">
+            Add prizes in the admin panel to get the wheel ready.
+          </p>
+        ) : null}
 
         {/* Wheel Container - Much Larger */}
         <div className="relative mx-auto mb-8 h-[500px] w-[500px] md:h-[600px] md:w-[600px]">
@@ -249,15 +188,18 @@ export default function WheelPage() {
             }`}
             style={{
               transform: `rotate(${rotation}deg)`,
-              transitionDuration: isSpinning ? `${wheelSettings.spinDuration}ms` : '500ms',
-              background: `conic-gradient(${wheelSettings.items
-                .map((_, index) => {
-                  const startAngle = (index * 360) / wheelSettings.items.length;
-                  const endAngle = ((index + 1) * 360) / wheelSettings.items.length;
-                  const color = wheelSettings.colors[index] || '#001158';
-                  return `${color} ${startAngle}deg ${endAngle}deg`;
-                })
-                .join(', ')})`,
+              transitionDuration: isSpinning ? `${SPIN_DURATION}ms` : '500ms',
+              background:
+                wheelSettings.items.length > 0
+                  ? `conic-gradient(${wheelSettings.items
+                      .map((_, index) => {
+                        const startAngle = (index * 360) / wheelSettings.items.length;
+                        const endAngle = ((index + 1) * 360) / wheelSettings.items.length;
+                        const color = wheelSettings.colors[index] || '#001158';
+                        return `${color} ${startAngle}deg ${endAngle}deg`;
+                      })
+                      .join(', ')})`
+                  : 'radial-gradient(circle at center, rgba(15,23,42,0.95), rgba(30,41,59,0.85))',
             }}
           >
             {/* Center Circle */}
@@ -296,7 +238,7 @@ export default function WheelPage() {
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Button
             onClick={spinWheel}
-            disabled={isSpinning || !canSpin}
+            disabled={isSpinning || !canSpin || wheelSettings.items.length === 0}
             className="bg-leiden px-8 py-4 text-lg hover:bg-leiden/90"
             size="lg"
           >
@@ -316,103 +258,13 @@ export default function WheelPage() {
             onClick={resetWheel}
             variant="outline"
             size="lg"
-            disabled={isSpinning}
+            disabled={isSpinning || wheelSettings.items.length === 0}
             className="px-6 py-4"
           >
             <RotateCcw className="mr-2 h-4 w-4" />
             Reset
           </Button>
         </div>
-
-        {/* Spin Status */}
-        {isSpinning && (
-          <div className="mt-6">
-            <div className="flex items-center justify-center gap-2 text-leiden">
-              <Sparkles className="h-5 w-5 animate-pulse" />
-              <span className="text-lg font-semibold">The wheel is spinning...</span>
-            </div>
-            <div className="mt-2 h-2 overflow-hidden rounded-full bg-gray-200">
-              <div
-                className="h-full bg-leiden transition-all duration-1000"
-                style={{
-                  width: `${((wheelSettings.spinDuration - (Date.now() % wheelSettings.spinDuration)) / wheelSettings.spinDuration) * 100}%`,
-                }}
-              ></div>
-            </div>
-          </div>
-        )}
-
-        {/* Result */}
-        {result && (
-          <Card className="mx-auto mt-8 max-w-lg border-4 border-yellow-400 bg-gradient-to-br from-yellow-50 to-orange-50 shadow-2xl">
-            <CardHeader className="text-center">
-              <CardTitle className="flex items-center justify-center gap-2 text-3xl font-bold text-orange-800">
-                <Sparkles className="h-8 w-8 text-yellow-500" />
-                🎉 WINNER! 🎉
-                <Sparkles className="h-8 w-8 text-yellow-500" />
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-center">
-              <div className="mb-4 text-6xl">🏆</div>
-              <p className="mb-2 text-2xl font-bold text-orange-700">You won:</p>
-              <p className="mb-4 text-3xl font-black text-leiden">{result}</p>
-              <p className="rounded-lg bg-white/50 p-3 text-lg text-orange-600">
-                🎪 Please visit the LIACS booth to claim your amazing prize! 🎪
-              </p>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Instructions */}
-        <Card className="mx-auto mt-8 max-w-2xl">
-          <CardContent className="pt-6">
-            <h3 className="mb-4 text-center text-xl font-semibold">How to Play:</h3>
-            <div className="grid gap-4 md:grid-cols-2">
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li className="flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-leiden text-xs font-bold text-white">
-                    1
-                  </span>
-                  Click &quot;Spin the Wheel&quot; to start
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-leiden text-xs font-bold text-white">
-                    2
-                  </span>
-                  Watch the wheel spin for {wheelSettings.spinDuration / 1000} seconds
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-leiden text-xs font-bold text-white">
-                    3
-                  </span>
-                  See what amazing prize you&apos;ve won!
-                </li>
-              </ul>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li className="flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-science text-xs font-bold text-white">
-                    ⌨
-                  </span>
-                  Press &apos;S&apos; on your keyboard to spin
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-science text-xs font-bold text-white">
-                    🔊
-                  </span>
-                  {wheelSettings.soundEnabled ? 'Sound effects enabled' : 'Sound effects disabled'}
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-science text-xs font-bold text-white">
-                    🎊
-                  </span>
-                  {wheelSettings.confettiEnabled
-                    ? 'Confetti celebration enabled'
-                    : 'Confetti disabled'}
-                </li>
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
@@ -21,6 +21,25 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { useIsMobile } from '@/hooks/use-mobile';
 import { MobileUnsupportedNotice } from '@/components/common/MobileNotice';
 
+const HELPER_SECTIONS = [
+  {
+    title: 'How to use',
+    points: [
+      'Press Start to animate the selected algorithm. Pause or Stop to regain control.',
+      'Shuffle regenerates a shared dataset so each run works on the same numbers.',
+      'Adjust speed and array size to see how workload influences animation pacing.',
+    ],
+  },
+  {
+    title: 'Compare mode',
+    points: [
+      'Enable the toggle to place two visualizers side by side.',
+      'Each panel can run a different algorithm but they share the same dataset.',
+      'Great for contrasting strategies like Bubble vs Quick or Radix vs Sleep.',
+    ],
+  },
+];
+
 export default function SortingPage() {
   const isMobile = useIsMobile();
   const [ready, setReady] = useState(false);
@@ -35,6 +54,15 @@ export default function SortingPage() {
   useEffect(() => {
     setReady(true);
   }, []);
+
+  const regenerateArray = useCallback(
+    (size: number = arraySize) => {
+      const next = createRandomArray(size);
+      setBaseArray(next);
+      setArrayVersion(v => v + 1);
+    },
+    [arraySize]
+  );
 
   if (!ready) {
     return null;
@@ -52,16 +80,6 @@ export default function SortingPage() {
   }
 
   const anyRunning = leftRunning || rightRunning;
-
-  //eslint-disable-next-line
-  const regenerateArray = useCallback(
-    (size: number = arraySize) => {
-      const next = createRandomArray(size);
-      setBaseArray(next);
-      setArrayVersion(v => v + 1);
-    },
-    [arraySize]
-  );
 
   const handleArraySizeChange = (value: number[]) => {
     const nextSize = value[0];
@@ -83,28 +101,6 @@ export default function SortingPage() {
   };
 
   // eslint-disable-next-line
-  const helperSections = useMemo(
-    () => [
-      {
-        title: 'How to use',
-        points: [
-          'Press Start to animate the selected algorithm. Pause or Stop to regain control.',
-          'Shuffle regenerates a shared dataset so each run works on the same numbers.',
-          'Adjust speed and array size to see how workload influences animation pacing.',
-        ],
-      },
-      {
-        title: 'Compare mode',
-        points: [
-          'Enable the toggle to place two visualizers side by side.',
-          'Each panel can run a different algorithm but they share the same dataset.',
-          'Great for contrasting strategies like Bubble vs Quick or Radix vs Sleep.',
-        ],
-      },
-    ],
-    []
-  );
-
   return (
     <div className="container mx-auto max-w-7xl space-y-8 px-4 py-10">
       <header className="flex flex-col gap-2">
@@ -145,7 +141,7 @@ export default function SortingPage() {
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 text-sm text-muted-foreground">
-                  {helperSections.map(section => (
+                  {HELPER_SECTIONS.map(section => (
                     <div key={section.title} className="space-y-2">
                       <div className="font-medium text-foreground">{section.title}</div>
                       <ul className="list-disc space-y-1 pl-5">
@@ -224,6 +220,7 @@ export default function SortingPage() {
           speed={speed}
           disabled={false}
           onRunningChange={setLeftRunning}
+          compactControls={compareMode}
         />
 
         {compareMode && (
@@ -235,6 +232,7 @@ export default function SortingPage() {
             disabled={false}
             onRunningChange={setRightRunning}
             initialAlgorithm="quick"
+            compactControls
           />
         )}
       </div>
