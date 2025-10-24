@@ -33,8 +33,8 @@ export const nl = {
     objectDetectionDescription: 'YOLOv12-demo in de browser',
 
     // Presentation menu
-    viewQuestions: 'Vragen Bekijken',
-    viewQuestionsDescription: 'Bekijk ingediende vragen',
+    questions: 'Vragen',
+    questionsDescription: 'Bekijk ingediende vragen',
     addQuestions: 'Vragen Toevoegen',
     addQuestionsDescription: 'Nieuwe vragen indienen voor Q&A',
   },

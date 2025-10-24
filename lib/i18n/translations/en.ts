@@ -33,8 +33,8 @@ export const en = {
     objectDetectionDescription: 'YOLOv12 demo running in the browser',
 
     // Presentation menu
-    viewQuestions: 'View Questions',
-    viewQuestionsDescription: 'Browse submitted questions',
+    questions: 'Questions',
+    questionsDescription: 'Browse submitted questions',
     addQuestions: 'Add Questions',
     addQuestionsDescription: 'Submit new questions for Q&A',
   },

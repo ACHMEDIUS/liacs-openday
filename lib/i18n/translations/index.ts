@@ -38,8 +38,8 @@ type BaseTranslationStructure = {
     grappleGameDescription: string;
     objectDetection: string;
     objectDetectionDescription: string;
-    viewQuestions: string;
-    viewQuestionsDescription: string;
+    questions: string;
+    questionsDescription: string;
     addQuestions: string;
     addQuestionsDescription: string;
   };
