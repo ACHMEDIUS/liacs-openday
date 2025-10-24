@@ -155,37 +155,3 @@ export const getQuestions = onCall({ secrets: [appPrivateKey, appClientEmail] },
     throw new Error('Failed to get questions');
   }
 });
-
-// Score tracking
-export const updateScore = onCall({ secrets: [appPrivateKey, appClientEmail] }, async request => {
-  initializeAdmin();
-  try {
-    const { userToken, score } = request.data;
-
-    if (!userToken) {
-      throw new Error('Authentication required');
-    }
-
-    const decodedToken = await admin.auth().verifyIdToken(userToken);
-    const userId = decodedToken.uid;
-
-    const scoreData = {
-      userId,
-      score,
-      timestamp: admin.firestore.Timestamp.now(),
-    };
-
-    await admin.firestore().collection('scores').add(scoreData);
-
-    return { success: true };
-  } catch (error) {
-    logger.error('Failed to update score:', error);
-    throw new Error('Failed to update score');
-  }
-});
-
-// Notification when new question is submitted
-export const onQuestionSubmitted = onDocumentCreated('questions/{questionId}', event => {
-  logger.info(`New question submitted: ${event.params.questionId}`);
-  // You can add notification logic here (email, Slack, etc.)
-});
