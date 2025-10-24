@@ -3,6 +3,8 @@ export interface Question {
   text: string;
   accepted: boolean;
   main?: boolean;
+  answer?: string;
+  status?: 'pending' | 'approved' | 'denied';
   createdAt?: import('firebase/firestore').Timestamp;
 }
 
