@@ -5,6 +5,7 @@ export type AlgorithmId =
   | 'merge'
   | 'quick'
   | 'radix'
+  | 'heap'
   | 'bogo'
   | 'miracle'
   | 'sleep';
@@ -27,6 +28,7 @@ export interface SortAlgorithm {
   worst: string;
   space: string;
   category: AlgorithmCategory;
+  code: string;
   generateSteps: (array: number[]) => SortStep[];
 }
 
@@ -263,15 +265,63 @@ const bogoSortSteps = (input: number[]): SortStep[] => {
   return steps;
 };
 
+const heapSortSteps = (input: number[]): SortStep[] => {
+  const array = clone(input);
+  const steps: SortStep[] = [];
+  const length = array.length;
+
+  const recordComparison = (i: number, j: number) => {
+    steps.push({ array: clone(array), comparing: [i, j], swapping: [], sorted: [] });
+  };
+
+  const recordSwap = (i: number, j: number) => {
+    [array[i], array[j]] = [array[j], array[i]];
+    steps.push({ array: clone(array), comparing: [], swapping: [i, j], sorted: [] });
+  };
+
+  const heapify = (size: number, root: number) => {
+    let largest = root;
+    const left = 2 * root + 1;
+    const right = 2 * root + 2;
+
+    if (left < size) {
+      recordComparison(largest, left);
+      if (array[left] > array[largest]) {
+        largest = left;
+      }
+    }
+
+    if (right < size) {
+      recordComparison(largest, right);
+      if (array[right] > array[largest]) {
+        largest = right;
+      }
+    }
+
+    if (largest !== root) {
+      recordSwap(root, largest);
+      heapify(size, largest);
+    }
+  };
+
+  for (let i = Math.floor(length / 2) - 1; i >= 0; i--) {
+    heapify(length, i);
+  }
+
+  for (let i = length - 1; i > 0; i--) {
+    recordSwap(0, i);
+    const sorted = Array.from({ length: length - i }, (_, idx) => idx + i);
+    steps.push({ array: clone(array), comparing: [], swapping: [], sorted });
+    heapify(i, 0);
+  }
+
+  return finalizeSteps(array, steps);
+};
+
 const miracleSortSteps = (input: number[]): SortStep[] => {
   const original = clone(input);
-  const sorted = [...original].sort((a, b) => a - b);
   const steps: SortStep[] = [];
-
   steps.push({ array: original, comparing: [], swapping: [], sorted: [] });
-  steps.push({ array: original, comparing: [], swapping: [], sorted: [] });
-  steps.push({ array: original, comparing: [], swapping: [], sorted: [] });
-  steps.push({ array: sorted, comparing: [], swapping: [], sorted: sorted.map((_, idx) => idx) });
   return steps;
 };
 
@@ -305,56 +355,136 @@ export const sortingAlgorithms: SortAlgorithm[] = [
     description:
       'Repeatedly compares adjacent items and swaps them if they are out of order, bubbling the largest values to the end.',
     best: 'O(n)',
-    average: 'O(n²)',
-    worst: 'O(n²)',
-    space: 'O(1)',
-    category: 'comparison',
-    generateSteps: bubbleSortSteps,
-  },
+  average: 'O(n²)',
+  worst: 'O(n²)',
+  space: 'O(1)',
+  category: 'comparison',
+  code: `function bubbleSort(items) {
+  const arr = [...items];
+  for (let i = 0; i < arr.length - 1; i++) {
+    for (let j = 0; j < arr.length - i - 1; j++) {
+      if (arr[j] > arr[j + 1]) {
+        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+      }
+    }
+  }
+  return arr;
+}`,
+  generateSteps: bubbleSortSteps,
+},
   {
     id: 'selection',
     name: 'Selection Sort',
     description: 'Selects the smallest remaining item and places it at the current position.',
     best: 'O(n²)',
-    average: 'O(n²)',
-    worst: 'O(n²)',
-    space: 'O(1)',
-    category: 'comparison',
-    generateSteps: selectionSortSteps,
-  },
+  average: 'O(n²)',
+  worst: 'O(n²)',
+  space: 'O(1)',
+  category: 'comparison',
+  code: `function selectionSort(items) {
+  const arr = [...items];
+  for (let i = 0; i < arr.length - 1; i++) {
+    let minIndex = i;
+    for (let j = i + 1; j < arr.length; j++) {
+      if (arr[j] < arr[minIndex]) {
+        minIndex = j;
+      }
+    }
+    if (minIndex !== i) {
+      [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
+    }
+  }
+  return arr;
+}`,
+  generateSteps: selectionSortSteps,
+},
   {
     id: 'insertion',
     name: 'Insertion Sort',
     description: 'Builds a sorted list by inserting each new element into its proper place.',
     best: 'O(n)',
     average: 'O(n²)',
-    worst: 'O(n²)',
-    space: 'O(1)',
-    category: 'comparison',
-    generateSteps: insertionSortSteps,
-  },
+  worst: 'O(n²)',
+  space: 'O(1)',
+  category: 'comparison',
+  code: `function insertionSort(items) {
+  const arr = [...items];
+  for (let i = 1; i < arr.length; i++) {
+    const key = arr[i];
+    let j = i - 1;
+    while (j >= 0 && arr[j] > key) {
+      arr[j + 1] = arr[j];
+      j--;
+    }
+    arr[j + 1] = key;
+  }
+  return arr;
+}`,
+  generateSteps: insertionSortSteps,
+},
   {
     id: 'merge',
     name: 'Merge Sort',
     description: 'Divides the list into halves, recursively sorts them, and merges the results.',
     best: 'O(n log n)',
     average: 'O(n log n)',
-    worst: 'O(n log n)',
-    space: 'O(n)',
-    category: 'comparison',
-    generateSteps: mergeSortSteps,
-  },
+  worst: 'O(n log n)',
+  space: 'O(n)',
+  category: 'comparison',
+  code: `function mergeSort(items) {
+  if (items.length <= 1) return items;
+  const mid = Math.floor(items.length / 2);
+  const left = mergeSort(items.slice(0, mid));
+  const right = mergeSort(items.slice(mid));
+  return merge(left, right);
+}
+
+function merge(left, right) {
+  const result = [];
+  let i = 0;
+  let j = 0;
+  while (i < left.length && j < right.length) {
+    if (left[i] <= right[j]) {
+      result.push(left[i++]);
+    } else {
+      result.push(right[j++]);
+    }
+  }
+  return result.concat(left.slice(i)).concat(right.slice(j));
+}`,
+  generateSteps: mergeSortSteps,
+},
   {
     id: 'quick',
     name: 'Quick Sort',
     description: 'Partitions the list around a pivot and recursively sorts the partitions.',
     best: 'O(n log n)',
     average: 'O(n log n)',
-    worst: 'O(n²)',
-    space: 'O(log n)',
-    category: 'comparison',
-    generateSteps: quickSortSteps,
-  },
+  worst: 'O(n²)',
+  space: 'O(log n)',
+  category: 'comparison',
+  code: `function quickSort(items) {
+  const arr = [...items];
+  partition(arr, 0, arr.length - 1);
+  return arr;
+}
+
+function partition(arr, low, high) {
+  if (low >= high) return;
+  const pivot = arr[high];
+  let i = low - 1;
+  for (let j = low; j < high; j++) {
+    if (arr[j] <= pivot) {
+      i++;
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  }
+  [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+  partition(arr, low, i);
+  partition(arr, i + 2, high);
+}`,
+  generateSteps: quickSortSteps,
+},
   {
     id: 'radix',
     name: 'Radix Sort',
@@ -364,7 +494,82 @@ export const sortingAlgorithms: SortAlgorithm[] = [
     worst: 'O(d(n + k))',
     space: 'O(n + k)',
     category: 'non-comparison',
+    code: `function radixSort(items) {
+  const arr = [...items];
+  const max = Math.max(...arr, 0);
+  let exp = 1;
+  while (Math.floor(max / exp) > 0) {
+    countingSortByDigit(arr, exp);
+    exp *= 10;
+  }
+  return arr;
+}
+
+function countingSortByDigit(arr, exp) {
+  const output = new Array(arr.length).fill(0);
+  const count = new Array(10).fill(0);
+  for (let i = 0; i < arr.length; i++) {
+    const digit = Math.floor(arr[i] / exp) % 10;
+    count[digit]++;
+  }
+  for (let i = 1; i < 10; i++) {
+    count[i] += count[i - 1];
+  }
+  for (let i = arr.length - 1; i >= 0; i--) {
+    const digit = Math.floor(arr[i] / exp) % 10;
+    output[count[digit] - 1] = arr[i];
+    count[digit]--;
+  }
+  for (let i = 0; i < arr.length; i++) {
+    arr[i] = output[i];
+  }
+}`,
     generateSteps: radixSortSteps,
+  },
+  {
+    id: 'heap',
+    name: 'Heap Sort',
+    description: 'Builds a max-heap, then extracts the largest element one by one.',
+    best: 'O(n log n)',
+    average: 'O(n log n)',
+    worst: 'O(n log n)',
+    space: 'O(1)',
+    category: 'comparison',
+    code: `function heapSort(items) {
+  const arr = [...items];
+  buildMaxHeap(arr);
+  for (let end = arr.length - 1; end > 0; end--) {
+    [arr[0], arr[end]] = [arr[end], arr[0]];
+    siftDown(arr, 0, end);
+  }
+  return arr;
+}
+
+function buildMaxHeap(arr) {
+  for (let i = Math.floor(arr.length / 2) - 1; i >= 0; i--) {
+    siftDown(arr, i, arr.length);
+  }
+}
+
+function siftDown(arr, root, size) {
+  while (true) {
+    let largest = root;
+    const left = 2 * root + 1;
+    const right = 2 * root + 2;
+    if (left < size && arr[left] > arr[largest]) {
+      largest = left;
+    }
+    if (right < size && arr[right] > arr[largest]) {
+      largest = right;
+    }
+    if (largest === root) {
+      return;
+    }
+    [arr[root], arr[largest]] = [arr[largest], arr[root]];
+    root = largest;
+  }
+}`,
+    generateSteps: heapSortSteps,
   },
   {
     id: 'bogo',
@@ -372,33 +577,68 @@ export const sortingAlgorithms: SortAlgorithm[] = [
     description: 'Randomly shuffles the array until it happens to be sorted. Educational chaos.',
     best: 'Lucky',
     average: 'Unbounded',
-    worst: 'Heat death of the universe',
-    space: 'O(1)',
-    category: 'fun',
-    generateSteps: bogoSortSteps,
-  },
+  worst: 'Heat death of the universe',
+  space: 'O(1)',
+  category: 'fun',
+  code: `function bogoSort(items) {
+  const arr = [...items];
+  while (!isSorted(arr)) {
+    shuffle(arr);
+  }
+  return arr;
+}
+
+function isSorted(arr) {
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i - 1] > arr[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}`,
+  generateSteps: bogoSortSteps,
+},
   {
     id: 'miracle',
     name: 'Miracle Sort',
     description: 'Checks once, waits for a miracle, and suddenly the array is sorted.',
     best: 'O(1)',
     average: 'You wish',
-    worst: '☺',
-    space: 'O(1)',
-    category: 'fun',
-    generateSteps: miracleSortSteps,
-  },
+  worst: '☺',
+  space: 'O(1)',
+  category: 'fun',
+  code: `function miracleSort(items) {
+  // Nothing happens here — sometimes luck is on our side.
+  return items;
+}`,
+  generateSteps: miracleSortSteps,
+},
   {
     id: 'sleep',
     name: 'Sleep Sort',
     description: 'Schedules each value to “wake up” proportional to its magnitude.',
     best: 'O(n)',
     average: 'O(max + n)',
-    worst: 'Alarm clock fails',
-    space: 'O(n)',
-    category: 'fun',
-    generateSteps: sleepSortSteps,
-  },
+  worst: 'Alarm clock fails',
+  space: 'O(n)',
+  category: 'fun',
+  code: `function sleepSort(items, emit) {
+  items.forEach(value => {
+    setTimeout(() => emit(value), value);
+  });
+}
+
+// Emits values in ascending order as timers finish.
+sleepSort([3, 1, 4, 2], value => console.log(value));`,
+  generateSteps: sleepSortSteps,
+},
 ];
 
 export const getAlgorithmById = (id: AlgorithmId): SortAlgorithm => {

@@ -28,6 +28,7 @@ interface SortVisualizerProps {
   disabled?: boolean;
   onRunningChange?: (isRunning: boolean) => void;
   initialAlgorithm?: AlgorithmId;
+  compactControls?: boolean;
 }
 
 const COLORS = {
@@ -50,6 +51,7 @@ export function SortVisualizer({
   disabled = false,
   onRunningChange,
   initialAlgorithm = defaultAlgorithmId,
+  compactControls = false,
 }: SortVisualizerProps) {
   const [algorithmId, setAlgorithmId] = useState<AlgorithmId>(initialAlgorithm);
   const [array, setArray] = useState<number[]>(baseArray);
@@ -171,31 +173,13 @@ export function SortVisualizer({
   return (
     <Card className="h-full">
       <CardHeader className="space-y-2">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-xl font-semibold text-leiden">{label}</CardTitle>
-          <Badge
-            variant={
-              algorithm.category === 'non-comparison'
-                ? 'secondary'
-                : algorithm.category === 'fun'
-                  ? 'destructive'
-                  : 'outline'
-            }
-          >
-            {algorithm.category === 'non-comparison'
-              ? 'Non-comparison'
-              : algorithm.category === 'fun'
-                ? 'For Fun'
-                : 'Comparison'}
-          </Badge>
-        </div>
-        <div className="text-sm text-muted-foreground">{algorithm.description}</div>
+        {/* TODO: Fix later */}
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex flex-col gap-4 lg:flex-row">
           <div className="flex-1 space-y-4">
             <div className="flex items-center justify-between gap-2">
-              <label className="text-sm font-medium">Algorithm</label>
+              <label className="text-xl font-semibold text-leiden">Algorithm</label>
               <Select
                 value={algorithmId}
                 onValueChange={value => {
@@ -265,20 +249,24 @@ export function SortVisualizer({
                 disabled={isRunning || disabled}
                 className="bg-leiden text-white hover:bg-leiden/90"
               >
-                <Play className="mr-2 h-4 w-4" />
-                Start
+                <Play className={compactControls ? 'h-4 w-4' : 'mr-2 h-4 w-4'} />
+                {!compactControls && 'Start'}
               </Button>
               <Button onClick={handlePauseResume} disabled={!isRunning} variant="outline">
-                {isPaused ? <Play className="mr-2 h-4 w-4" /> : <Pause className="mr-2 h-4 w-4" />}
-                {isPaused ? 'Resume' : 'Pause'}
+                {isPaused ? (
+                  <Play className={compactControls ? 'h-4 w-4' : 'mr-2 h-4 w-4'} />
+                ) : (
+                  <Pause className={compactControls ? 'h-4 w-4' : 'mr-2 h-4 w-4'} />
+                )}
+                {!compactControls && (isPaused ? 'Resume' : 'Pause')}
               </Button>
               <Button onClick={handleStop} disabled={!isRunning} variant="outline">
-                <Square className="mr-2 h-4 w-4" />
-                Stop
+                <Square className={compactControls ? 'h-4 w-4' : 'mr-2 h-4 w-4'} />
+                {!compactControls && 'Stop'}
               </Button>
               <Button onClick={handleReset} disabled={isRunning} variant="outline">
-                <RotateCcw className="mr-2 h-4 w-4" />
-                Reset
+                <RotateCcw className={compactControls ? 'h-4 w-4' : 'mr-2 h-4 w-4'} />
+                {!compactControls && 'Reset'}
               </Button>
             </div>
 
@@ -310,6 +298,16 @@ export function SortVisualizer({
           </div>
         </div>
       </CardContent>
+      {algorithm.code ? (
+        <div className="mx-6 mb-6 rounded-xl border border-slate-800 bg-slate-950/80 p-4">
+          <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-300">
+            Reference Implementation
+          </div>
+          <pre className="max-h-64 overflow-auto whitespace-pre font-mono text-xs text-emerald-200">
+            <code>{algorithm.code}</code>
+          </pre>
+        </div>
+      ) : null}
     </Card>
   );
 }
