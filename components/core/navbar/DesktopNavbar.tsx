@@ -159,28 +159,18 @@ export function DesktopNavbar({
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent text-white hover:text-white/80">
-                  {t.nav.presentation}
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="grid w-[300px] gap-3 p-4">
-                    {presentationLinks.map(item => (
-                      <NavigationMenuLink asChild key={item.key}>
-                        <Link
-                          href={item.href}
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">{item.title}</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            {item.description}
-                          </p>
-                        </Link>
-                      </NavigationMenuLink>
-                    ))}
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
+              {presentationLinks[0] ? (
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <Link
+                      href={presentationLinks[0].href}
+                      className="inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10 hover:text-white/80 focus:bg-white/10 focus:outline-none"
+                    >
+                      {presentationLinks[0].title}
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              ) : null}
               {/* Admin link only for authenticated users */}
               {user && (
                 <NavigationMenuItem>

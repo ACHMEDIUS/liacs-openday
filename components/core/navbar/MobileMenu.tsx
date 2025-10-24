@@ -139,27 +139,15 @@ export function MobileMenu({
                 </div>
 
                 <div className="mt-10 space-y-6">
-                  <div>
-                    <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/70">
-                      {t.nav.presentation}
-                    </h3>
-                    <div className="space-y-2">
-                      {presentationLinks.map(item => (
-                        <Link
-                          key={item.key}
-                          href={item.href}
-                          onClick={() => setIsOpen(false)}
-                          className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium transition hover:border-purple-300/60 hover:bg-white/10"
-                        >
-                          <span>{item.title}</span>
-                          <span className="text-xs font-normal text-white/60">
-                            {item.description}
-                          </span>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-
+                  {presentationLinks[0] ? (
+                    <Link
+                      href={presentationLinks[0].href}
+                      onClick={() => setIsOpen(false)}
+                      className="block rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold transition hover:border-purple-300/60 hover:bg-white/10"
+                    >
+                      {presentationLinks[0].title}
+                    </Link>
+                  ) : null}
                   {user && (
                     <Link
                       href="/admin"

@@ -71,15 +71,9 @@ const APP_CONFIG: AppConfig[] = [
 const PRESENTATION_CONFIG: PresentationConfig[] = [
   {
     key: 'view',
-    href: '/questions/view',
-    title: t => t.nav.viewQuestions,
-    description: t => t.nav.viewQuestionsDescription,
-  },
-  {
-    key: 'add',
-    href: '/questions/add',
-    title: t => t.nav.addQuestions,
-    description: t => t.nav.addQuestionsDescription,
+    href: '/questions',
+    title: t => t.nav.questions,
+    description: t => t.nav.questionsDescription,
   },
 ];
 
