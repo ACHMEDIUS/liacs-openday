@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -44,7 +44,6 @@ const getBarHeightPercentages = (array: number[]) => {
 };
 
 export function SortVisualizer({
-  label,
   baseArray,
   baseArrayVersion,
   speed,
@@ -172,9 +171,7 @@ export function SortVisualizer({
 
   return (
     <Card className="h-full">
-      <CardHeader className="space-y-2">
-        {/* TODO: Fix later */}
-      </CardHeader>
+      <CardHeader className="space-y-2">{/* TODO: Fix later */}</CardHeader>
       <CardContent className="space-y-6">
         <div className="flex flex-col gap-4 lg:flex-row">
           <div className="flex-1 space-y-4">

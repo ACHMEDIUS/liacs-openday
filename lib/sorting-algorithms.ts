@@ -355,11 +355,11 @@ export const sortingAlgorithms: SortAlgorithm[] = [
     description:
       'Repeatedly compares adjacent items and swaps them if they are out of order, bubbling the largest values to the end.',
     best: 'O(n)',
-  average: 'O(n²)',
-  worst: 'O(n²)',
-  space: 'O(1)',
-  category: 'comparison',
-  code: `function bubbleSort(items) {
+    average: 'O(n²)',
+    worst: 'O(n²)',
+    space: 'O(1)',
+    category: 'comparison',
+    code: `function bubbleSort(items) {
   const arr = [...items];
   for (let i = 0; i < arr.length - 1; i++) {
     for (let j = 0; j < arr.length - i - 1; j++) {
@@ -370,18 +370,18 @@ export const sortingAlgorithms: SortAlgorithm[] = [
   }
   return arr;
 }`,
-  generateSteps: bubbleSortSteps,
-},
+    generateSteps: bubbleSortSteps,
+  },
   {
     id: 'selection',
     name: 'Selection Sort',
     description: 'Selects the smallest remaining item and places it at the current position.',
     best: 'O(n²)',
-  average: 'O(n²)',
-  worst: 'O(n²)',
-  space: 'O(1)',
-  category: 'comparison',
-  code: `function selectionSort(items) {
+    average: 'O(n²)',
+    worst: 'O(n²)',
+    space: 'O(1)',
+    category: 'comparison',
+    code: `function selectionSort(items) {
   const arr = [...items];
   for (let i = 0; i < arr.length - 1; i++) {
     let minIndex = i;
@@ -396,18 +396,18 @@ export const sortingAlgorithms: SortAlgorithm[] = [
   }
   return arr;
 }`,
-  generateSteps: selectionSortSteps,
-},
+    generateSteps: selectionSortSteps,
+  },
   {
     id: 'insertion',
     name: 'Insertion Sort',
     description: 'Builds a sorted list by inserting each new element into its proper place.',
     best: 'O(n)',
     average: 'O(n²)',
-  worst: 'O(n²)',
-  space: 'O(1)',
-  category: 'comparison',
-  code: `function insertionSort(items) {
+    worst: 'O(n²)',
+    space: 'O(1)',
+    category: 'comparison',
+    code: `function insertionSort(items) {
   const arr = [...items];
   for (let i = 1; i < arr.length; i++) {
     const key = arr[i];
@@ -420,18 +420,18 @@ export const sortingAlgorithms: SortAlgorithm[] = [
   }
   return arr;
 }`,
-  generateSteps: insertionSortSteps,
-},
+    generateSteps: insertionSortSteps,
+  },
   {
     id: 'merge',
     name: 'Merge Sort',
     description: 'Divides the list into halves, recursively sorts them, and merges the results.',
     best: 'O(n log n)',
     average: 'O(n log n)',
-  worst: 'O(n log n)',
-  space: 'O(n)',
-  category: 'comparison',
-  code: `function mergeSort(items) {
+    worst: 'O(n log n)',
+    space: 'O(n)',
+    category: 'comparison',
+    code: `function mergeSort(items) {
   if (items.length <= 1) return items;
   const mid = Math.floor(items.length / 2);
   const left = mergeSort(items.slice(0, mid));
@@ -452,18 +452,18 @@ function merge(left, right) {
   }
   return result.concat(left.slice(i)).concat(right.slice(j));
 }`,
-  generateSteps: mergeSortSteps,
-},
+    generateSteps: mergeSortSteps,
+  },
   {
     id: 'quick',
     name: 'Quick Sort',
     description: 'Partitions the list around a pivot and recursively sorts the partitions.',
     best: 'O(n log n)',
     average: 'O(n log n)',
-  worst: 'O(n²)',
-  space: 'O(log n)',
-  category: 'comparison',
-  code: `function quickSort(items) {
+    worst: 'O(n²)',
+    space: 'O(log n)',
+    category: 'comparison',
+    code: `function quickSort(items) {
   const arr = [...items];
   partition(arr, 0, arr.length - 1);
   return arr;
@@ -483,8 +483,8 @@ function partition(arr, low, high) {
   partition(arr, low, i);
   partition(arr, i + 2, high);
 }`,
-  generateSteps: quickSortSteps,
-},
+    generateSteps: quickSortSteps,
+  },
   {
     id: 'radix',
     name: 'Radix Sort',
@@ -577,10 +577,10 @@ function siftDown(arr, root, size) {
     description: 'Randomly shuffles the array until it happens to be sorted. Educational chaos.',
     best: 'Lucky',
     average: 'Unbounded',
-  worst: 'Heat death of the universe',
-  space: 'O(1)',
-  category: 'fun',
-  code: `function bogoSort(items) {
+    worst: 'Heat death of the universe',
+    space: 'O(1)',
+    category: 'fun',
+    code: `function bogoSort(items) {
   const arr = [...items];
   while (!isSorted(arr)) {
     shuffle(arr);
@@ -603,33 +603,33 @@ function shuffle(arr) {
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
 }`,
-  generateSteps: bogoSortSteps,
-},
+    generateSteps: bogoSortSteps,
+  },
   {
     id: 'miracle',
     name: 'Miracle Sort',
     description: 'Checks once, waits for a miracle, and suddenly the array is sorted.',
     best: 'O(1)',
     average: 'You wish',
-  worst: '☺',
-  space: 'O(1)',
-  category: 'fun',
-  code: `function miracleSort(items) {
+    worst: '☺',
+    space: 'O(1)',
+    category: 'fun',
+    code: `function miracleSort(items) {
   // Nothing happens here — sometimes luck is on our side.
   return items;
 }`,
-  generateSteps: miracleSortSteps,
-},
+    generateSteps: miracleSortSteps,
+  },
   {
     id: 'sleep',
     name: 'Sleep Sort',
     description: 'Schedules each value to “wake up” proportional to its magnitude.',
     best: 'O(n)',
     average: 'O(max + n)',
-  worst: 'Alarm clock fails',
-  space: 'O(n)',
-  category: 'fun',
-  code: `function sleepSort(items, emit) {
+    worst: 'Alarm clock fails',
+    space: 'O(n)',
+    category: 'fun',
+    code: `function sleepSort(items, emit) {
   items.forEach(value => {
     setTimeout(() => emit(value), value);
   });
@@ -637,8 +637,8 @@ function shuffle(arr) {
 
 // Emits values in ascending order as timers finish.
 sleepSort([3, 1, 4, 2], value => console.log(value));`,
-  generateSteps: sleepSortSteps,
-},
+    generateSteps: sleepSortSteps,
+  },
 ];
 
 export const getAlgorithmById = (id: AlgorithmId): SortAlgorithm => {

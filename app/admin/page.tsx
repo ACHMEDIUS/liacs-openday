@@ -37,9 +37,7 @@ import {
 import { db } from '@/lib/firebase';
 import { GENERAL_SETTINGS_STORAGE_KEY } from '@/lib/constants';
 import { DEFAULT_YOUTUBE_URL, isValidYouTubeUrl } from '@/lib/youtube';
-import programmingQuestionsData, {
-  ProgrammingQuestion,
-} from '@/lib/data/programming/questions';
+import programmingQuestionsData, { ProgrammingQuestion } from '@/lib/data/programming/questions';
 import {
   Loader2,
   Settings,
@@ -116,8 +114,7 @@ export default function AdminPage() {
   const [answerDrafts, setAnswerDrafts] = useState<Record<string, string>>({});
   const [savingAnswerFor, setSavingAnswerFor] = useState<string | null>(null);
   const [questionActionLoading, setQuestionActionLoading] = useState<Record<string, boolean>>({});
-  const [generalSettings, setGeneralSettings] =
-    useState<GeneralSettings>(defaultGeneralSettings);
+  const [generalSettings, setGeneralSettings] = useState<GeneralSettings>(defaultGeneralSettings);
   const [generalSaveMessage, setGeneralSaveMessage] = useState('');
   const [generalError, setGeneralError] = useState('');
 
@@ -218,7 +215,10 @@ export default function AdminPage() {
             let createdAt: number | null = null;
             if (typeof rawCreatedAt === 'number') {
               createdAt = rawCreatedAt;
-            } else if (rawCreatedAt && typeof (rawCreatedAt as { toMillis?: () => number }).toMillis === 'function') {
+            } else if (
+              rawCreatedAt &&
+              typeof (rawCreatedAt as { toMillis?: () => number }).toMillis === 'function'
+            ) {
               createdAt = (rawCreatedAt as { toMillis: () => number }).toMillis();
             }
             const rawText =
@@ -279,16 +279,13 @@ export default function AdminPage() {
     return () => unsubscribe();
   }, []);
 
-  const handleQuestionDialogChange = useCallback(
-    (open: boolean) => {
-      setQuestionDialogOpen(open);
-      if (!open) {
-        setNewQuestionText('');
-        setQuestionFormError('');
-      }
-    },
-    []
-  );
+  const handleQuestionDialogChange = useCallback((open: boolean) => {
+    setQuestionDialogOpen(open);
+    if (!open) {
+      setNewQuestionText('');
+      setQuestionFormError('');
+    }
+  }, []);
 
   const handleCreateQuestion = useCallback(async () => {
     if (!newQuestionText.trim()) {
@@ -720,7 +717,9 @@ export default function AdminPage() {
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>Add Question</DialogTitle>
-                    <DialogDescription>Publish a new visitor question for review.</DialogDescription>
+                    <DialogDescription>
+                      Publish a new visitor question for review.
+                    </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-3">
                     <Label htmlFor="new-question">Question</Label>
@@ -732,9 +731,7 @@ export default function AdminPage() {
                       rows={4}
                       disabled={isQuestionSubmitting}
                     />
-                    {questionFormError && (
-                      <Alert variant="destructive">{questionFormError}</Alert>
-                    )}
+                    {questionFormError && <Alert variant="destructive">{questionFormError}</Alert>}
                   </div>
                   <DialogFooter className="mt-4">
                     <DialogClose asChild>

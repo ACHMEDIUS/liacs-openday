@@ -8,9 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Code, CheckCircle, XCircle, Trophy } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { MobileUnsupportedNotice } from '@/components/common/MobileNotice';
-import programmingQuestions, {
-  ProgrammingQuestion,
-} from '@/lib/data/programming/questions';
+import programmingQuestions, { ProgrammingQuestion } from '@/lib/data/programming/questions';
 
 export default function InteractivePage() {
   const isMobile = useIsMobile();
