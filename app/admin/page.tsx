@@ -12,17 +12,6 @@ import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import {
-  addDoc,
   collection,
   deleteDoc,
   doc,
@@ -30,7 +19,6 @@ import {
   onSnapshot,
   orderBy,
   query,
-  serverTimestamp,
   updateDoc,
   where,
 } from 'firebase/firestore';
@@ -38,6 +26,7 @@ import { db } from '@/lib/firebase';
 import { GENERAL_SETTINGS_STORAGE_KEY } from '@/lib/constants';
 import { DEFAULT_YOUTUBE_URL, isValidYouTubeUrl } from '@/lib/youtube';
 import programmingQuestionsData, { ProgrammingQuestion } from '@/lib/data/programming/questions';
+import { AddQuestionDialog } from '@/components/app/add-question-dialog';
 import {
   Loader2,
   Settings,
@@ -106,11 +95,7 @@ export default function AdminPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [questionDialogOpen, setQuestionDialogOpen] = useState(false);
-  const [newQuestionText, setNewQuestionText] = useState('');
-  const [isQuestionSubmitting, setIsQuestionSubmitting] = useState(false);
   const [questionError, setQuestionError] = useState('');
-  const [questionFormError, setQuestionFormError] = useState('');
   const [answerDrafts, setAnswerDrafts] = useState<Record<string, string>>({});
   const [savingAnswerFor, setSavingAnswerFor] = useState<string | null>(null);
   const [questionActionLoading, setQuestionActionLoading] = useState<Record<string, boolean>>({});
@@ -278,43 +263,6 @@ export default function AdminPage() {
 
     return () => unsubscribe();
   }, []);
-
-  const handleQuestionDialogChange = useCallback((open: boolean) => {
-    setQuestionDialogOpen(open);
-    if (!open) {
-      setNewQuestionText('');
-      setQuestionFormError('');
-    }
-  }, []);
-
-  const handleCreateQuestion = useCallback(async () => {
-    if (!newQuestionText.trim()) {
-      setQuestionFormError('Question cannot be empty.');
-      return;
-    }
-
-    setIsQuestionSubmitting(true);
-    setQuestionFormError('');
-    setQuestionError('');
-
-    try {
-      await addDoc(collection(db, 'questions'), {
-        text: newQuestionText.trim(),
-        accepted: false,
-        status: 'pending' satisfies QuestionStatus,
-        main: false,
-        answer: '',
-        createdAt: serverTimestamp(),
-      });
-      setNewQuestionText('');
-      setQuestionDialogOpen(false);
-    } catch (error) {
-      console.error('Failed to add question:', error);
-      setQuestionFormError('Failed to add question. Please try again.');
-    } finally {
-      setIsQuestionSubmitting(false);
-    }
-  }, [newQuestionText]);
 
   const approveQuestion = useCallback(
     async (questionId: string) => {
@@ -707,48 +655,7 @@ export default function AdminPage() {
                   Manage submitted questions from visitors
                 </p>
               </div>
-              <Dialog open={questionDialogOpen} onOpenChange={handleQuestionDialogChange}>
-                <DialogTrigger asChild>
-                  <Button className="bg-leiden hover:bg-leiden/90">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Question
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Add Question</DialogTitle>
-                    <DialogDescription>
-                      Publish a new visitor question for review.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="space-y-3">
-                    <Label htmlFor="new-question">Question</Label>
-                    <Textarea
-                      id="new-question"
-                      value={newQuestionText}
-                      onChange={event => setNewQuestionText(event.target.value)}
-                      placeholder="Enter the question text"
-                      rows={4}
-                      disabled={isQuestionSubmitting}
-                    />
-                    {questionFormError && <Alert variant="destructive">{questionFormError}</Alert>}
-                  </div>
-                  <DialogFooter className="mt-4">
-                    <DialogClose asChild>
-                      <Button variant="outline" disabled={isQuestionSubmitting}>
-                        Cancel
-                      </Button>
-                    </DialogClose>
-                    <Button
-                      onClick={handleCreateQuestion}
-                      disabled={isQuestionSubmitting}
-                      className="bg-leiden hover:bg-leiden/90"
-                    >
-                      {isQuestionSubmitting ? 'Saving...' : 'Save Question'}
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+              <AddQuestionDialog />
             </CardHeader>
             <CardContent>
               {questionError && (
