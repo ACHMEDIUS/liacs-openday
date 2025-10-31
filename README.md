@@ -1,19 +1,19 @@
 <div align="center">
 
 <pre>
- ██╗      ██╗  █████╗   ██████╗ ███████╗
- ██║      ██║ ██╔══██╗ ██╔════╝ ██╔════╝
- ██║      ██║ ███████║ ██║      ███████╗
- ██║      ██║ ██╔══██║ ██║      ╚════██║
- ███████╗ ██║ ██║  ██║ ╚██████╗ ███████║
- ╚══════╝ ╚═╝ ╚═╝  ╚═╝  ╚═════╝ ╚══════╝
+  ██████╗  ██████╗  ███████╗ ███╗   ██╗     ██████╗   █████╗  ██╗   ██╗
+ ██╔═══██╗ ██╔══██╗ ██╔════╝ ████╗  ██║     ██╔══██╗ ██╔══██╗ ╚██╗ ██╔╝
+ ██║   ██║ ██████╔╝ █████╗   ██╔██╗ ██║     ██║  ██║ ███████║  ╚████╔╝ 
+ ██║   ██║ ██╔═══╝  ██╔══╝   ██║╚██╗██║     ██║  ██║ ██╔══██║   ╚██╔╝  
+ ╚██████╔╝ ██║      ███████╗ ██║ ╚████║     ██████╔╝ ██║  ██║    ██║   
+  ╚═════╝  ╚═╝      ╚══════╝ ╚═╝  ╚═══╝     ╚═════╝  ╚═╝  ╚═╝    ╚═╝   
 </pre>
 
 </div>
 
-# LIACS Open Day Portal
+# Open Day Portal
 
-An interactive web portal for Leiden University's LIACS (Leiden Institute of Advanced Computer Science) Open Day. Features live Q&A, interactive CS demos, and admin management tools.
+An interactive web portal for University's Computer Science or related Open Days. Features live Q&A, interactive CS demos, and admin management tools.
 
 ## Features
 
@@ -112,4 +112,4 @@ See [STYLE.md](STYLE.md) for complete design guidelines.
 
 ## TODO
 
-Refactor into FINE architecture, and configure CI
+Refactor into FINE architecture, make university agnostic (Currently made for LIACS (Leiden Institute of Advanced Computer Science))
