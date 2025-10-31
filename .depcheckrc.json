@@ -1,5 +1,5 @@
 {
-  "ignorePatterns": ["test", "coverage", ".next", "out", "functions"],
+  "ignorePatterns": ["tests", "coverage", ".next", "out", "functions"],
   "ignoreMatches": [
     "@types/*",
     "eslint-config-*",
@@ -9,5 +9,5 @@
     "@vitejs/*"
   ],
   "skipMissing": false,
-  "ignoreDirs": [".next", "out", "node_modules", "coverage", "functions"]
+  "ignoreDirs": [".next", "out", "node_modules", "coverage", "functions", "tests"]
 }
