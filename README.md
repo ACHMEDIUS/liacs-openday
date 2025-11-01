@@ -110,6 +110,32 @@ The app uses a dark gradient theme with:
 
 See [STYLE.md](STYLE.md) for complete design guidelines.
 
+## Contributing
+
+We welcome contributions! Please read our [Contributing Guide](.github/CONTRIBUTING.md) for detailed information on:
+
+- Development workflow and setup
+- Code standards and style guidelines
+- Testing requirements
+- Commit message conventions
+- Pull request process
+- Firebase development guidelines
+
+**Quick Start for Contributors:**
+
+```bash
+# Fork and clone the repo, then:
+npm install                # Install dependencies
+npm run dev                # Start development server
+npm run lint               # Check code style
+npm run type-check         # Verify TypeScript
+npm test                   # Run tests
+```
+
+Pre-commit hooks automatically run linting, type-checking, and formatting via Husky.
+
+For design guidelines, see [STYLE.md](STYLE.md).
+
 ## TODO
 
 Refactor into FINE architecture, make university agnostic (Currently made for LIACS (Leiden Institute of Advanced Computer Science))
