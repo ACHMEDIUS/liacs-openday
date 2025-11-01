@@ -8,6 +8,7 @@ import { Loader2 } from 'lucide-react';
 import { db } from '@/lib/firebase';
 import type { Question as FirestoreQuestion } from '@/types/question';
 import { AddQuestionDialog } from '@/components/app/add-question-dialog';
+import QRCode from '@/components/common/qr-code';
 
 type ViewQuestion = {
   id: string;
@@ -127,16 +128,40 @@ export default function QuestionsPage() {
         <div className="space-y-10">
           <section>
             <Card className="border-leiden/30">
-              <CardHeader className="flex flex-row items-center justify-between gap-3">
-                <CardTitle className="text-2xl">Current Question</CardTitle>
-                <AddQuestionDialog
-                  triggerButtonText="Add"
-                  dialogTitle="Submit Your Question"
-                  dialogDescription="Ask a question and it will be reviewed by our team before appearing on the board."
-                  placeholder="Enter your question here"
-                  submitButtonText="Submit Question"
-                  submittingButtonText="Submitting..."
-                />
+              <CardHeader className="flex flex-row items-center gap-6 p-6">
+                <div className="flex-shrink-0">
+                  <QRCode
+                    data={`https://openday.betterludev.nl/questions`}
+                    width={120}
+                    height={120}
+                    dotsOptions={{
+                      color: '#001158',
+                      type: 'rounded',
+                    }}
+                    backgroundOptions={{
+                      color: '#ffffff',
+                    }}
+                    cornersSquareOptions={{
+                      color: '#001158',
+                      type: 'extra-rounded',
+                    }}
+                    cornersDotOptions={{
+                      color: '#001158',
+                      type: 'dot',
+                    }}
+                  />
+                </div>
+                <CardTitle className="flex-1 text-center text-2xl">Current Question</CardTitle>
+                <div className="flex-shrink-0">
+                  <AddQuestionDialog
+                    triggerButtonText="Add"
+                    dialogTitle="Submit Your Question"
+                    dialogDescription="Ask a question and it will be reviewed by our team before appearing on the board."
+                    placeholder="Enter your question here"
+                    submitButtonText="Submit Question"
+                    submittingButtonText="Submitting..."
+                  />
+                </div>
               </CardHeader>
               <CardContent>
                 {mainQuestion ? (

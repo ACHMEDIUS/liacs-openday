@@ -33,28 +33,6 @@ print(result)`,
     category: 'Syntax',
   },
   {
-    id: 'javascript-sum-array',
-    language: 'JavaScript',
-    title: 'Function Scope Issue',
-    description: 'This function should return the sum of an array:',
-    code: `function sumArray(arr) {
-  for (let i = 0; i < arr.length; i++) {
-    sum += arr[i];
-  }
-  return sum;
-}`,
-    options: [
-      'Initialize sum before the loop',
-      'Change let to var for i',
-      'Use arr.forEach instead of the loop',
-      'Move the return statement inside the loop',
-    ],
-    correctAnswer: 0,
-    explanation: 'The accumulator `sum` was never declared or initialised in the function.',
-    difficulty: 'Medium',
-    category: 'Variables',
-  },
-  {
     id: 'cpp-find-max',
     language: 'C++',
     title: 'Finding Maximum Value',
@@ -74,7 +52,7 @@ print(result)`,
       'Both of the above fixes are required',
       'Use std::max instead of manual comparison',
     ],
-    correctAnswer: 2,
+    correctAnswer: 0,
     explanation:
       'The loop runs one step too far and the initial max should come from the first element to handle negatives.',
     difficulty: 'Hard',
@@ -98,29 +76,6 @@ print(items[0:2])`,
       'List slicing is end-exclusive; `items[0:3]` (or `items[:3]`) returns the first three elements.',
     difficulty: 'Easy',
     category: 'Slicing',
-  },
-  {
-    id: 'python-mutable-default',
-    language: 'Python',
-    title: 'Mutable Default Argument',
-    description: 'Appending to a list default behaves strangely between calls:',
-    code: `def append_item(value, bucket=[]):
-  bucket.append(value)
-  return bucket
-
-print(append_item(1))
-print(append_item(2))`,
-    options: [
-      'Move bucket=[] into the function body',
-      'Replace [] with None and create a new list when needed',
-      'Call bucket.clear() before appending',
-      'Use bucket = list() as the default',
-    ],
-    correctAnswer: 1,
-    explanation:
-      'Default arguments are evaluated once. Use None as the default and create a new list inside the function.',
-    difficulty: 'Medium',
-    category: 'Functions',
   },
   {
     id: 'python-dict-iteration',
@@ -148,11 +103,16 @@ for student, score in grades.items():
     language: 'JavaScript',
     title: 'Loop with setTimeout',
     description: 'What prints when using setTimeout inside a for loop?',
-    code: `for (var i = 0; i < 3; i++) {
-  setTimeout(() => console.log(i), 0);
-}`,
-    options: ['0 1 2', '3 3 3', '0 0 0', '0 1 2 with delays'],
-    correctAnswer: 1,
+    code: `flet number = 5
+console.log("The number is: " + number)
+`,
+    options: [
+      'Nothing is wrong, it will run fine',
+      'The number 5 must be in quotes',
+      'You cannot use console.log in JavaScript',
+      'You must use var instead of let',
+    ],
+    correctAnswer: 0,
     explanation:
       '`var` is function-scoped, so each callback sees the final value (3). Use let or IIFE to capture the value.',
     difficulty: 'Medium',

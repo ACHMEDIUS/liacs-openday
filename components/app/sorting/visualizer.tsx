@@ -173,7 +173,7 @@ export function SortVisualizer({
     <Card className="h-full">
       <CardHeader className="space-y-2">{/* TODO: Fix later */}</CardHeader>
       <CardContent className="space-y-6">
-        <div className="flex flex-col gap-4 lg:flex-row">
+        <div className={`flex flex-col gap-4 ${compactControls ? '' : 'lg:flex-row'}`}>
           <div className="flex-1 space-y-4">
             <div className="flex items-center justify-between gap-2">
               <label className="text-xl font-semibold text-leiden">Algorithm</label>
@@ -208,7 +208,9 @@ export function SortVisualizer({
                 <span className="text-sm font-medium">Visualization</span>
                 <span className="text-xs text-muted-foreground">{array.length} elements</span>
               </div>
-              <div className="flex h-64 items-end justify-stretch gap-[2px] px-4 py-4 sm:h-72">
+              <div
+                className={`flex items-end justify-stretch gap-[2px] px-4 py-4 ${compactControls ? 'h-48 sm:h-56' : 'h-64 sm:h-72'}`}
+              >
                 {array.map((value, index) => {
                   const height = `${barHeights[index]}%`;
                   const isSorted = sortedIndices.includes(index);
@@ -239,8 +241,8 @@ export function SortVisualizer({
             </div>
           </div>
 
-          <div className="w-full max-w-xs space-y-4">
-            <div className="grid grid-cols-2 gap-2">
+          <div className={`w-full ${compactControls ? 'space-y-3' : 'space-y-4 lg:max-w-xs'}`}>
+            <div className={`grid gap-2 ${compactControls ? 'grid-cols-4' : 'grid-cols-2'}`}>
               <Button
                 onClick={handleStart}
                 disabled={isRunning || disabled}
@@ -267,11 +269,15 @@ export function SortVisualizer({
               </Button>
             </div>
 
-            <div className="space-y-3 rounded-lg border bg-card px-4 py-3">
+            <div
+              className={`rounded-lg border bg-card px-4 py-3 ${compactControls ? 'space-y-2' : 'space-y-3'}`}
+            >
               <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Complexity
               </div>
-              <div className="grid grid-cols-2 gap-2 text-sm">
+              <div
+                className={`grid gap-2 text-sm ${compactControls ? 'grid-cols-4' : 'grid-cols-2'}`}
+              >
                 <div>
                   <div className="text-[11px] uppercase text-muted-foreground">Best</div>
                   <Badge variant="outline">{algorithm.best}</Badge>
@@ -294,17 +300,18 @@ export function SortVisualizer({
             {legend}
           </div>
         </div>
-      </CardContent>
-      {algorithm.code ? (
-        <div className="mx-6 mb-6 rounded-xl border border-slate-800 bg-slate-950/80 p-4">
-          <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-300">
-            Reference Implementation
+
+        {algorithm.code && !compactControls && (
+          <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-4">
+            <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-300">
+              Reference Implementation
+            </div>
+            <pre className="max-h-64 overflow-auto whitespace-pre font-mono text-xs text-emerald-200">
+              <code>{algorithm.code}</code>
+            </pre>
           </div>
-          <pre className="max-h-64 overflow-auto whitespace-pre font-mono text-xs text-emerald-200">
-            <code>{algorithm.code}</code>
-          </pre>
-        </div>
-      ) : null}
+        )}
+      </CardContent>
     </Card>
   );
 }
